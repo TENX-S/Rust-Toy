@@ -45,9 +45,9 @@ fn main() {
     let numbers = GEN(48, 57);
 
     let mut demands = env::args()
-                                    .skip(1)
-                                    .map(|arg| arg.parse::<usize>().unwrap())
-                                    .collect::<Vec<usize>>();
+                          .skip(1)
+                          .map(|arg| arg.parse::<usize>().unwrap())
+                          .collect::<Vec<usize>>();
     if !demands.is_empty() {
         if CHECK(&mut demands) {
             length = demands[0];
