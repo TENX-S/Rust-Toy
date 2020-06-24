@@ -72,7 +72,7 @@ fn main() {
                 println!("{:?}", password.join(""));
             };
             gen_pwd(length-symbol-number, symbol, number);
-        } else {
+        } else{
             println!("Invalid input!!");
         }
     }
