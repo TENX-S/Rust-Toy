@@ -63,14 +63,14 @@ fn main() {
                         .iter()
                         .map(|args| {
                             RAND_IDX(args.0, args.1) // generate the random index on corresponding Vec depend on its amount
-                                    .iter()
-                                    .map(|idx| args.2[*idx].clone())// index their values in to Vec<String>
-                                    .collect()
+                                .iter()
+                                .map(|idx| args.2[*idx].clone())// index their values in to Vec<String>
+                                .collect()
                             })
                         .fold(vec![], |mut acc, mut x| {acc.append(&mut x);acc});
                         // unfold these Vec<Vec<String>> in to Vec<String>
-                password.shuffle(&mut rng); // shuffle it
-                println!("{:?}", password.join("")); // join these items into &str
+                password.shuffle(&mut rng);
+                println!("{:?}", password.join(""));
             };
             gen_pwd(length-symbol-number, symbol, number);
         } else {
