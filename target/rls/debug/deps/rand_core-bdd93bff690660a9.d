@@ -1,0 +1,10 @@
+/Users/tenx/Documents/GitHub/Rust-demo/target/rls/debug/deps/rand_core-bdd93bff690660a9.rmeta: /Users/tenx/.cargo/registry/src/mirrors.tuna.tsinghua.edu.cn-df7c3c540f42cdbd/rand_core-0.5.1/src/lib.rs /Users/tenx/.cargo/registry/src/mirrors.tuna.tsinghua.edu.cn-df7c3c540f42cdbd/rand_core-0.5.1/src/error.rs /Users/tenx/.cargo/registry/src/mirrors.tuna.tsinghua.edu.cn-df7c3c540f42cdbd/rand_core-0.5.1/src/block.rs /Users/tenx/.cargo/registry/src/mirrors.tuna.tsinghua.edu.cn-df7c3c540f42cdbd/rand_core-0.5.1/src/impls.rs /Users/tenx/.cargo/registry/src/mirrors.tuna.tsinghua.edu.cn-df7c3c540f42cdbd/rand_core-0.5.1/src/le.rs /Users/tenx/.cargo/registry/src/mirrors.tuna.tsinghua.edu.cn-df7c3c540f42cdbd/rand_core-0.5.1/src/os.rs
+
+/Users/tenx/Documents/GitHub/Rust-demo/target/rls/debug/deps/rand_core-bdd93bff690660a9.d: /Users/tenx/.cargo/registry/src/mirrors.tuna.tsinghua.edu.cn-df7c3c540f42cdbd/rand_core-0.5.1/src/lib.rs /Users/tenx/.cargo/registry/src/mirrors.tuna.tsinghua.edu.cn-df7c3c540f42cdbd/rand_core-0.5.1/src/error.rs /Users/tenx/.cargo/registry/src/mirrors.tuna.tsinghua.edu.cn-df7c3c540f42cdbd/rand_core-0.5.1/src/block.rs /Users/tenx/.cargo/registry/src/mirrors.tuna.tsinghua.edu.cn-df7c3c540f42cdbd/rand_core-0.5.1/src/impls.rs /Users/tenx/.cargo/registry/src/mirrors.tuna.tsinghua.edu.cn-df7c3c540f42cdbd/rand_core-0.5.1/src/le.rs /Users/tenx/.cargo/registry/src/mirrors.tuna.tsinghua.edu.cn-df7c3c540f42cdbd/rand_core-0.5.1/src/os.rs
+
+/Users/tenx/.cargo/registry/src/mirrors.tuna.tsinghua.edu.cn-df7c3c540f42cdbd/rand_core-0.5.1/src/lib.rs:
+/Users/tenx/.cargo/registry/src/mirrors.tuna.tsinghua.edu.cn-df7c3c540f42cdbd/rand_core-0.5.1/src/error.rs:
+/Users/tenx/.cargo/registry/src/mirrors.tuna.tsinghua.edu.cn-df7c3c540f42cdbd/rand_core-0.5.1/src/block.rs:
+/Users/tenx/.cargo/registry/src/mirrors.tuna.tsinghua.edu.cn-df7c3c540f42cdbd/rand_core-0.5.1/src/impls.rs:
+/Users/tenx/.cargo/registry/src/mirrors.tuna.tsinghua.edu.cn-df7c3c540f42cdbd/rand_core-0.5.1/src/le.rs:
+/Users/tenx/.cargo/registry/src/mirrors.tuna.tsinghua.edu.cn-df7c3c540f42cdbd/rand_core-0.5.1/src/os.rs:

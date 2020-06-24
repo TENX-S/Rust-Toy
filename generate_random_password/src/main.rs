@@ -25,12 +25,25 @@ const CHECK: fn(&mut Vec<usize>) -> bool = |v| {
             .is_empty()
 };
 
+const RAND_IDX: fn(usize, usize) -> Vec<usize> = |n, cnt| {
+    let mut rng = rand::thread_rng();
+    let mut idx;
+    let mut idxs = vec![];
+    for _ in 0..n {
+        idx = rng.gen_range(0, cnt);
+        idxs.push(idx);
+    }
+    idxs
+};
+
+
+
 fn main() {
 
     let mut length: usize = 16;
     let mut symbol: usize = 4;
     let mut number: usize = 4;
-
+    
     let mut symbols_buffer = GEN(33, 47);
     symbols_buffer.append(&mut GEN(58, 64));
     symbols_buffer.append(&mut GEN(91, 96));
@@ -57,17 +70,6 @@ fn main() {
         }
     }
 
-    let gen_idx = |n, cnt| {
-        let mut rng = rand::thread_rng();
-        let mut idx;
-        let mut idxs = vec![];
-        for _ in 0..n {
-            idx = rng.gen_range(0, cnt);
-            idxs.push(idx);
-        }
-        idxs
-    };
-
     let gen_pwd = |l: usize, s: usize, n: usize| {
 
         let mut rng = rand::thread_rng();
@@ -80,7 +82,7 @@ fn main() {
                 ]
                 .iter()
                 .map(|args| {
-                    gen_idx(args.0, args.1)
+                    RAND_IDX(args.0, args.1)
                             .iter()
                             .map(|idx| args.2[*idx].clone())
                             .collect::<Vec<String>>()
