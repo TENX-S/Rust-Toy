@@ -3,7 +3,6 @@
 use std::env;
 use rand::Rng;
 use rand::prelude::*;
-use std::process::id;
 
 const GEN: fn(u8, u8) -> Vec<String> = |start, end| {
         (start..=end).collect::<Vec<u8>>()
@@ -30,7 +29,7 @@ fn main() {
 
     let mut length: usize = 16;
     let mut symbol: usize = 4;
-    let mut number: usize= 4;
+    let mut number: usize = 4;
 
     let mut symbols_buffer = GEN(33, 47);
     symbols_buffer.append(&mut GEN(58, 64));
@@ -88,8 +87,7 @@ fn main() {
                     })
                 .fold(vec![], |mut acc, mut x| {acc.append(&mut x);acc});
         password.shuffle(&mut rng);
-        password.join("");
-        println!("{:?}", password);
+        println!("{:?}", password.join(""));
     };
     gen_pwd(length-symbol-number, symbol, number);
 }
