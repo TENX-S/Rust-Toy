@@ -36,14 +36,12 @@ const RAND_IDX: fn(usize, usize) -> Vec<usize> = |n, cnt| {
     idxs
 };
 
-
-
 fn main() {
 
     let mut length: usize = 16;
     let mut symbol: usize = 4;
     let mut number: usize = 4;
-    
+
     let mut symbols_buffer = GEN(33, 47);
     symbols_buffer.append(&mut GEN(58, 64));
     symbols_buffer.append(&mut GEN(91, 96));
