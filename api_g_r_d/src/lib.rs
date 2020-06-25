@@ -1,3 +1,4 @@
+#![allow(non_snake_case)]
 use rand::prelude::*;
 
 const _GEN: fn(Vec<(u8, u8)>) -> Vec<String> = |range_list| {
@@ -25,11 +26,11 @@ const _RAND_IDX: fn(usize, usize) -> Vec<usize> = |n, cnt| { // Given the amount
 };
 
 const _DATA: fn() -> (Vec<String>, Vec<String>, Vec<String>) = || {
-    let symbols: Vec<String> = _GEN(vec![(33, 47), (58, 64), (91, 96), (123, 126)]);
     let letters: Vec<String> = _GEN(vec![(65, 90), (97, 122)]);
+    let symbols: Vec<String> = _GEN(vec![(33, 47), (58, 64), (91, 96), (123, 126)]);
     let numbers: Vec<String> = _GEN(vec![(48, 57)]);
 
-    (symbols, letters, numbers)
+    (letters, symbols, numbers)
 };
 
 pub const GEN_PWD: fn(usize, usize, usize) -> String = |l, s, n| {
@@ -39,7 +40,7 @@ pub const GEN_PWD: fn(usize, usize, usize) -> String = |l, s, n| {
 
         let mut rng = rand::thread_rng();
         let data = _DATA();
-        let mut password =
+        let mut PWD =
         vec![
             (l, data.0),
             (s, data.1),
@@ -54,6 +55,6 @@ pub const GEN_PWD: fn(usize, usize, usize) -> String = |l, s, n| {
             })
             .fold(vec![], |mut acc, mut x| { acc.append(&mut x); acc });
             // unfold these Vec<Vec<String>> in to Vec<String>
-            password.shuffle(&mut rng);
-            password.join("")
+            PWD.shuffle(&mut rng);
+            PWD.join("")
 };

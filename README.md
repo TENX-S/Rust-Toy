@@ -1,9 +1,13 @@
 # Rust-demo
 
-Some funny toys in rust
+Some funny toys in Rust
+
+# Requirements
+
+Rust ≥ 1.44.0
 
 ## Utilities
-- [x] generate random password
+- [x] generate random password: `cargo run --package generate_random_password`
 
 
 

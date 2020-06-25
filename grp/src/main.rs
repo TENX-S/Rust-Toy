@@ -4,8 +4,8 @@ use api_g_r_d::GEN_PWD;
 
 fn main() {
     let length; // length of the password
-    let symbol; // amount of the symbols
-    let number; // amount of the numbers
+    let symbols_cnt; // amount of the symbols
+    let numbers_cnt; // amount of the numbers
 
     let requirement =
         env::args()
@@ -16,10 +16,9 @@ fn main() {
     if !requirement.is_empty() {
         if requirement[0] >= requirement[1] + requirement[2] { // check if the numbers is legal or not in logic
             length = requirement[0];
-            symbol = requirement[1];
-            number = requirement[2];
-            let password = GEN_PWD(length-symbol-number, symbol, number);
-            println!("{}", password);
+            symbols_cnt = requirement[1];
+            numbers_cnt = requirement[2];
+            println!("{}", GEN_PWD(length-symbols_cnt-numbers_cnt, symbols_cnt, numbers_cnt));
         } else { println!("Invalid input!!"); }
-    } else { println!("Should receive three arguments!"); }
+    } else { println!("{}", GEN_PWD(12, 1, 3)); } // Default
 }

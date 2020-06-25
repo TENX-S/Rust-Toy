@@ -1,5 +1,5 @@
 [package]
-name = "generate_random_password"
+name = "grp"
 version = "0.1.0"
 authors = ["TENX-S <ttenx@pm.me>"]
 edition = "2018"
