@@ -1,2 +1,2 @@
 [workspace]
-members = ["grp", "api_g_r_d"]
+members = ["grp", "grp_api"]

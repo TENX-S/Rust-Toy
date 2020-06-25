@@ -1,11 +1,17 @@
 [package]
 name = "grp"
-version = "0.1.0"
-authors = ["TENX-S <ttenx@pm.me>"]
+version = "0.1.1"
+authors = ["TENX-S <coldswind@pm.me>"]
+description = "Generate random password, customize the amount of symbols and numbers"
+homepage = "https://github.com/TENX-S/Rust-demo"
+repository = "https://github.com/TENX-S/Rust-demo"
+readme = "./README.md"
+keywords = ["random", "terminal-app", "password"]
+categories = ["command-line-utilities"]
 edition = "2018"
+license = "Apache-2.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rand = "0.7.3"
-api_g_r_d = { path = "../api_g_r_d" }
+grp_api = { path = "../grp_api" }

@@ -1,6 +1,5 @@
 use std::env;
-use api_g_r_d::GEN_PWD;
-
+use grp_api::GEN_PWD;
 
 fn main() {
     let length; // length of the password
