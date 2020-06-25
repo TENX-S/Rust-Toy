@@ -6,3 +6,7 @@ Some funny toys in rust
 - [x] generate random password
 
 
+
+## LICENSE
+
+Apache 2.0
