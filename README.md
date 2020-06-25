@@ -1,2 +1,8 @@
 # Rust-demo
-无聊时写的Rust小玩具
+
+Some funny toys in rust
+
+## Utilities
+- [x] generate random password
+
+
