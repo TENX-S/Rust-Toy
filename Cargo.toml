@@ -1,2 +1,2 @@
 [workspace]
-members = ["generate_random_password"]
+members = ["generate_random_password", "api_g_r_d"]

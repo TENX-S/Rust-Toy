@@ -1,5 +1,5 @@
 [package]
-name = "generate_random_password"
+name = "api_g_r_d"
 version = "0.1.0"
 authors = ["TENX-S <ttenx@pm.me>"]
 edition = "2018"
@@ -8,4 +8,3 @@ edition = "2018"
 
 [dependencies]
 rand = "0.7.3"
-api_g_r_d = { path = "../api_g_r_d" }
