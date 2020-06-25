@@ -58,3 +58,26 @@ pub const GEN_PWD: fn(usize, usize, usize) -> String = |l, s, n| {
             PWD.shuffle(&mut rng);
             PWD.join("")
 };
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn _GEN_works() {
+        assert_eq!(_GEN(vec![(48, 57)]), vec!["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]);
+        assert_eq!(_GEN(vec![(33, 47), (58, 64), (91, 96), (123, 126)]), vec!["!", "\"", "#", "$", "%", "&", "\'", "(", ")", "*", "+", ",", "-", ".", "/", ":", ";", "<", "=", ">", "?", "@", "[", "\\", "]", "^", "_", "`", "{", "|", "}", "~"]);
+        assert_eq!(_GEN(vec![(65, 90), (97, 122)]), vec!["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]);
+    }
+
+    #[test]
+    fn _RAND_IDX_works() {
+        let ret = _RAND_IDX(10_000, 100_0000)
+                    .iter()
+                    .filter(|x| **x < 0 && **x > 100_0000)
+                    .collect::<Vec<&usize>>()
+                    .is_empty();
+
+        assert!(ret);
+    }
+}
