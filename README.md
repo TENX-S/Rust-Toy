@@ -7,7 +7,7 @@ Some funny toys in Rust
 Rust ≥ 1.44.0
 
 ## Utilities
-- [x] [Generate random password](https://github.com/TENX-S/Rust-demo/tree/master/grp): `cargo run --package generate_random_password`
+- [x] [Generate random password](https://github.com/TENX-S/Rust-demo/tree/master/grp)
 
 
 
