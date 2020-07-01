@@ -1,6 +1,40 @@
 #![allow(non_snake_case)]
 use rand::prelude::*;
 
+pub struct RandomPassword {
+    length: usize,
+    sbl_cnt: usize,
+    num_cnt: usize,
+    content: Option<String>,
+}
+
+impl RandomPassword {
+
+    #[inline]
+    pub fn new(length: usize, sbl_cnt: usize, num_cnt: usize) -> Self {
+        RandomPassword { length, sbl_cnt, num_cnt, content: None }
+    }
+
+    #[inline]
+    pub fn show(&mut self) -> &str {
+        let mut rng = rand::thread_rng();
+        let data = _DATA();
+        let mut PWD = vec![(self.length-self.sbl_cnt-self.num_cnt, data.0), (self.sbl_cnt, data.1), (self.num_cnt, data.2),]
+            .iter()
+            .map(|args| {
+                _RAND_IDX(args.0, args.1.len()) // generate the random index on corresponding Vec depend on its amount
+                    .iter()
+                    .map(|idx| args.1[*idx].clone())// index their values in to Vec<String>
+                    .collect()
+            })
+            .fold(vec![], |mut acc, mut x| { acc.append(&mut x); acc });
+        // unfold these Vec<Vec<String>> in to Vec<String>
+        PWD.shuffle(&mut rng);
+        self.content = Some(PWD.join(""));
+        self.content.as_ref().expect("Should have a password here")
+    }
+}
+
 const _GEN: fn(Vec<(u8, u8)>) -> Vec<String> = |range_list| {
     let mut all = vec![];
     for (start, end) in range_list {
@@ -33,31 +67,6 @@ const _DATA: fn() -> (Vec<String>, Vec<String>, Vec<String>) = || {
     (letters, symbols, numbers)
 };
 
-pub const GEN_PWD: fn(usize, usize, usize) -> String = |l, s, n| {
-        // l: amount of letters [A-Z,a-z], say length - symbol - number
-        // s: amount of symbols, say symbol
-        // n: amount of numbers [0-9], say number
-
-        let mut rng = rand::thread_rng();
-        let data = _DATA();
-        let mut PWD =
-        vec![
-            (l, data.0),
-            (s, data.1),
-            (n, data.2),
-            ]
-            .iter()
-            .map(|args| {
-                _RAND_IDX(args.0, args.1.len()) // generate the random index on corresponding Vec depend on its amount
-                    .iter()
-                    .map(|idx| args.1[*idx].clone())// index their values in to Vec<String>
-                    .collect()
-            })
-            .fold(vec![], |mut acc, mut x| { acc.append(&mut x); acc });
-            // unfold these Vec<Vec<String>> in to Vec<String>
-            PWD.shuffle(&mut rng);
-            PWD.join("")
-};
 
 #[cfg(test)]
 mod tests {
@@ -73,11 +82,10 @@ mod tests {
     #[test]
     fn _RAND_IDX_works() {
         let ret = _RAND_IDX(10_000, 100_0000)
-                    .iter()
-                    .filter(|x| **x > 100_0000)
-                    .collect::<Vec<&usize>>()
-                    .is_empty();
-
+            .iter()
+            .filter(|x| **x > 100_0000)
+            .collect::<Vec<&usize>>()
+            .is_empty();
         assert!(ret);
     }
 }
