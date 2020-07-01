@@ -74,7 +74,7 @@ mod tests {
     fn _RAND_IDX_works() {
         let ret = _RAND_IDX(10_000, 100_0000)
                     .iter()
-                    .filter(|x| **x < 0 && **x > 100_0000)
+                    .filter(|x| **x > 100_0000)
                     .collect::<Vec<&usize>>()
                     .is_empty();
 
