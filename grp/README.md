@@ -1,6 +1,15 @@
 # Generate random password
 
 
+
+
+## Try it!
+```shell script
+$ cargo run --release --example grp
+```
+
+
+
 ## How to use?
 
 ```shell script
@@ -18,13 +27,7 @@ $ grp
 
 
 
-## Build yourself
-```shell script
-$ cargo run length symbols_count numbers_count --release
 
-$ cargo run --release
-#Defaults to: cargo run 12 1 3 --release
-```
 
 
 

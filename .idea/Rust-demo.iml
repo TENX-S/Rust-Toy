@@ -5,7 +5,9 @@
       <sourceFolder url="file://$MODULE_DIR$/generate_random_password/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/api_g_r_d/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/grp/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/grp_api/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/decrypt_ncm/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/grp/examples" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/decrypt_ncm/examples" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />
