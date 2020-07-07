@@ -13,3 +13,8 @@ Cargo.lock
 
 .gitignore
 .idea/
+<<<<<<< HEAD
+=======
+Cargo.toml
+src/
+>>>>>>> 239f9578150bfde0a63b2d96fe5bee9dda53ab33
