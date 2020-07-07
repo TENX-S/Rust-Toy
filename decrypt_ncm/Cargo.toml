@@ -1,0 +1,27 @@
+[package]
+name = "decrypt_ncm"
+version = "0.1.0"
+authors = ["TENX <coldswind@pm.me>"]
+edition = "2018"
+description = "convert encrypted ncm file to original music file."
+homepage = "https://github.com/TENX-S/Rust-demo"
+repository = "https://github.com/TENX-S/Rust-demo"
+license = "MIT"
+readme = "README.md"
+keywords = ["ncm", "converter",]
+
+[lib]
+crate-type = ["lib", "staticlib"]
+
+[dependencies]
+aes = "0.3.2"
+block-modes = "0.3.3"
+base64 = "0.11.0"
+glob = "0.3.0"
+metaflac = "0.2.2"
+id3 = "0.5.0"
+miniserde = "0.1.12"
+
+[profile.release]
+panic = "abort"
+lto = true
