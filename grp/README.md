@@ -5,12 +5,16 @@
 
 ## Try it!
 ```shell script
-$ cargo run --release --example grp
+$ cargo run --release --example grp_test
+# Default case: password length: 12, amount of symbols: 1, amount of numbers: 3
+
+$ cargo run --release --example grp_test 16 2 3
+# Specify the parameter: password length: 16, symbols amount: 2, numbers amount: 3
 ```
 
 
 
-## How to use?
+## Installation
 
 ```shell script
 $ cargo install grp

@@ -6,7 +6,7 @@ edition = "2018"
 description = "convert encrypted ncm file to original music file."
 homepage = "https://github.com/TENX-S/Rust-demo"
 repository = "https://github.com/TENX-S/Rust-demo"
-license = "MIT"
+license = "Apache 2.0"
 readme = "README.md"
 keywords = ["ncm", "converter",]
 
