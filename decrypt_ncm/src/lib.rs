@@ -373,6 +373,7 @@ pub fn decrypt_ncm(_path: &str) -> Result<(), Box<dyn error::Error>>{
             Err(_) => { failed += 1; }
         }
     }
+
     println!("Total: {}\nSuccess: {}\nFailed: {}", total, success, failed);
     Ok(())
 }

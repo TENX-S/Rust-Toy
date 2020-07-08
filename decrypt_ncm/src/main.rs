@@ -13,17 +13,18 @@ fn main() -> Result<(), Box<dyn error::Error>>{
 
     let files_path = &env::args().collect::<Vec<String>>()[1];
 
-    let file_list = match metadata(files_path.as_str())?.is_file() {
-        true => [PathBuf::from(files_path.as_str())].to_vec(),
-        false => {
-            let list = [files_path.as_str(), "**", "*.ncm"].iter().collect::<PathBuf>();
+    let file_list =
+        match metadata(files_path.as_str())?.is_file() {
+            true => [PathBuf::from(files_path.as_str())].to_vec(),
+            false => {
+                let list = [files_path.as_str(), "**", "*.ncm"].iter().collect::<PathBuf>();
 
-            glob(list.to_str()
-                .unwrap())?
-                .filter_map(Result::ok)
-                .collect::<Vec<_>>()
-        }
-    };
+                glob(list.to_str()
+                    .unwrap())?
+                    .filter_map(Result::ok)
+                    .collect::<Vec<_>>()
+            }
+        };
 
     let max_workers = num_cpus::get() as u32;
     let mut pool = Pool::new(max_workers);
