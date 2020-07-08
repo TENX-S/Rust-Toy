@@ -4,10 +4,15 @@
 ## Try it!
 
 ```shell script
-cargo run --release --example ncm_test
+$ cargo run --release --example ncm_test
 ```
 
+## Use the multi-processing feature (Recommend!)
 
+```shell script
+$ cargo build --release
+$ cargo run --release /absolute/path/to/your/ncm/files
+```
 
 ## API:
 
