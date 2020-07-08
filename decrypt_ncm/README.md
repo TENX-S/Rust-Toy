@@ -16,8 +16,7 @@ $ cargo run --release /absolute/path/to/directory/where/ncm/files/in
 
 
 
-## API:
+## Tips:
 
-```rust
-pub fn decrypt_ncm(_path: &str) -> Result<(), Box<dyn error::Error>> {}
-```
+As far as we know from test, it's not quite stable right at the time after the "73a4300" commit, some converted files(.flac/.mp3)
+may have a very short interruption (< 1 sec).
