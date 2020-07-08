@@ -11,8 +11,10 @@ $ cargo run --release --example ncm_test
 
 ```shell script
 $ cargo build --release
-$ cargo run --release /absolute/path/to/your/ncm/files
+$ cargo run --release /absolute/path/to/directory/where/ncm/files/in
 ```
+
+
 
 ## API:
 
