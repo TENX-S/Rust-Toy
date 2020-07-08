@@ -78,7 +78,7 @@ fn get_u32(buffer: &[u8]) -> u32 {
 }
 
 #[inline]
-fn convert(file_path: PathBuf) -> Result<PathBuf, Box<dyn error::Error>> {
+pub fn convert(file_path: PathBuf) -> Result<PathBuf, Box<dyn error::Error>> {
 
     let mut input = io::BufReader::new(File::open(&file_path)?);
     let mut buffer = [0; BUFFER_SIZE];
@@ -348,7 +348,7 @@ fn convert(file_path: PathBuf) -> Result<PathBuf, Box<dyn error::Error>> {
     Ok(target_path)
 }
 
-#[inline]
+
 pub fn decrypt_ncm(_path: &str) -> Result<(), Box<dyn error::Error>>{
 
     let file_list = match metadata(_path)?.is_file() {
