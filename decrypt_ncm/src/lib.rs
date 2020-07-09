@@ -11,10 +11,11 @@ use block_modes::{
     BlockMode,
     block_padding::Pkcs7,
 };
+use scoped_threadpool::Pool;
 
 use std:: {
-    io, str, fmt,
     fs::metadata,
+    io, str, fmt, env,
     error, path::PathBuf,
     fs::{ File, OpenOptions },
     io::SeekFrom::{ Current, Start },
@@ -78,7 +79,7 @@ fn get_u32(buffer: &[u8]) -> u32 {
 }
 
 #[inline]
-pub fn convert(file_path: PathBuf) -> Result<PathBuf, Box<dyn error::Error>> {
+fn convert(file_path: PathBuf) -> Result<PathBuf, Box<dyn error::Error>> {
 
     let mut input = io::BufReader::new(File::open(&file_path)?);
     let mut buffer = [0; BUFFER_SIZE];
@@ -349,6 +350,48 @@ pub fn convert(file_path: PathBuf) -> Result<PathBuf, Box<dyn error::Error>> {
 }
 
 
+pub fn run() -> Result<(), Box<dyn error::Error>> {
+    let files_path = &env::args().collect::<Vec<String>>()[1];
+
+    let file_list =
+        match metadata(files_path.as_str())?.is_file() {
+            true => [PathBuf::from(files_path.as_str())].to_vec(),
+            false => {
+                let list = [files_path.as_str(), "**", "*.ncm"].iter().collect::<PathBuf>();
+
+                glob(list.to_str()
+                    .unwrap())?
+                    .filter_map(Result::ok)
+                    .collect::<Vec<_>>()
+            }
+        };
+
+    let max_workers = num_cpus::get() as u32;
+    let mut pool = Pool::new(max_workers);
+
+    // let total = file_list.len();
+    // let mut success = 0;
+    // let mut failed = 0;
+
+    pool.scoped( |scoped| {
+        for file in file_list {
+            scoped.execute( move || {
+                convert(file).unwrap();
+                // match convert(file) {
+                //     Ok(_) => { success += 1; }
+                //     Err(_) => { failed += 1; }
+                // }
+            })
+        }
+    });
+
+    // println!("Total: {}\nSuccess: {}\nFailed: {}", total, success, failed);
+    Ok(())
+}
+
+
+
+/// For example ncm_test
 pub fn decrypt_ncm(_path: &str) -> Result<(), Box<dyn error::Error>>{
 
     let file_list = match metadata(_path)?.is_file() {
