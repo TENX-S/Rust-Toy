@@ -7,7 +7,7 @@
 $ cargo run --release --example ncm_test
 ```
 
-## Use the multi-processing feature (Recommend!)
+## Use the multi-processing feature (Recommended!)
 
 ```shell script
 $ cargo build --release
