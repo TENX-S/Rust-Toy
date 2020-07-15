@@ -4,17 +4,11 @@ version = "0.1.1"
 authors = ["TENX-S <ttenx@pm.me>"]
 edition = "2018"
 description = "Generate random password"
-homepage = "https://github.com/TENX-S/Rust-demo"
-repository = "https://github.com/TENX-S/Rust-demo"
+homepage = "https://github.com/TENX-S/Rust-Toy"
+repository = "https://github.com/TENX-S/Rust-Toy"
 license = "Apache 2.0"
 readme = "README.md"
 keywords = ["password", "random", "random password"]
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
-
-[lib]
-crate-type = ["lib", "staticlib"]
 
 
 [dependencies]

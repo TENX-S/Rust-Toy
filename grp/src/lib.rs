@@ -10,12 +10,10 @@ pub struct RandomPassword {
 
 impl RandomPassword {
 
-    #[inline]
     pub fn new(length: usize, sbl_cnt: usize, num_cnt: usize) -> Self {
         RandomPassword { length, sbl_cnt, num_cnt, content: None }
     }
 
-    #[inline]
     pub fn show(&mut self) -> &str {
         let mut rng = rand::thread_rng();
         let data = _DATA();

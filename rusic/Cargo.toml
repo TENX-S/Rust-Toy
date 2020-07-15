@@ -1,0 +1,13 @@
+[package]
+name = "rusic"
+version = "0.1.0"
+authors = ["TENX-S <ttenx@pm.me>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+
+[dependencies]
+glob = "0.3.0"
+rodio = "0.11.0"

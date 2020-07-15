@@ -4,14 +4,11 @@ version = "0.1.0"
 authors = ["TENX <coldswind@pm.me>"]
 edition = "2018"
 description = "convert encrypted ncm file to original music file."
-homepage = "https://github.com/TENX-S/Rust-demo"
-repository = "https://github.com/TENX-S/Rust-demo"
+homepage = "https://github.com/TENX-S/Rust-Toy"
+repository = "https://github.com/TENX-S/Rust-Toy"
 license = "Apache 2.0"
 readme = "README.md"
 keywords = ["ncm", "converter",]
-
-[lib]
-crate-type = ["lib", "staticlib"]
 
 [dependencies]
 
