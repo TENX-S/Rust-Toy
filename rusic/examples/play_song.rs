@@ -4,7 +4,7 @@ use std::io::stdin;
 use std::collections::HashMap;
 
 
-// ATTENTION! : - Before you run this example, you should run the example of ncm_test in decrypt_ncm
+// ATTENTION! : - Before you run this example, you should run the example of ncm_test in decrypt_ncm before
 
 fn main() {
 
