@@ -3,11 +3,12 @@ use rusic::*;
 use std::io::stdin;
 use std::collections::HashMap;
 
+
 // ATTENTION! : - Before you run this example, you should run the example of ncm_test in decrypt_ncm
 
 fn main() {
 
-    let music_list = get_music_list("decrypt_ncm/ncm_files".to_string());
+    let music_list = get_music_list("decrypt_ncm/ncm_files");
     let mut play_list = HashMap::new();
     let mut idx = 1;
     for file in &music_list {
@@ -27,9 +28,11 @@ fn main() {
             break;
         }
 
-        let music_file = play_list[&num.trim().parse::<i32>().unwrap()];
-        _play(music_file.to_str().unwrap());
-        println!("Playing {}", music_file.to_str().unwrap());
+        let music_file = play_list[&num.trim().parse::<i32>().unwrap()].to_str().unwrap();
+        println!("Playing {}\nTime {:?}", music_file, get_music_time(music_file));
+
+        _play(music_file);
+
 
     }
 
