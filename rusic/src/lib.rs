@@ -34,11 +34,11 @@ pub fn get_music_list(_path: &str) -> Vec<PathBuf> {
     music_list
 }
 
-pub fn _play(music_file: &str) {
+pub fn _play(music_path: &str) {
     let device = rodio::default_output_device().unwrap();
     let sink = Sink::new(&device);
 
-    let file = File::open(music_file).unwrap();
+    let file = File::open(music_path).unwrap();
     sink.append(Decoder::new(BufReader::new(file)).unwrap());
     sink.sleep_until_end();
 }
@@ -50,11 +50,8 @@ pub fn get_music_time(file_path: &str) -> (u64, u64){
         Decoder::new(BufReader::new(File::open(file_path).unwrap())).unwrap();
 
     let total_secs = music_file.total_duration().unwrap().as_secs();
-    println!("total_secs: {}", total_secs);
     let seconds = total_secs % 60;
-    println!("minutes: {}", seconds);
     let minutes = (total_secs - seconds) / 60;
-    println!("minutes: {}", minutes);
 
     (minutes, seconds)
 

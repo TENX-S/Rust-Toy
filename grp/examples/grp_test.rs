@@ -13,8 +13,8 @@ fn main() {
     if !requirement.is_empty() {
         let (length, sbl_cnt, num_cnt) = (requirement[0], requirement[1], requirement[2]);
         if length >= sbl_cnt + num_cnt { // check if the numbers is legal or not in logic
-            let mut r_p = RandomPassword::new(length, sbl_cnt, num_cnt);
-            println!("{}", r_p.show());
+            let r_p = RandomPassword::new(length, sbl_cnt, num_cnt).show();
+            println!("{}", r_p);
         } else { println!("Invalid input!!"); }
     } else { println!("{}", RandomPassword::new(12, 1, 3).show()); } // Default
 }

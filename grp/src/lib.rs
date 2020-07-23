@@ -5,31 +5,46 @@ pub struct RandomPassword {
     length: usize,
     sbl_cnt: usize,
     num_cnt: usize,
-    content: Option<String>,
+    content: String,
 }
 
 impl RandomPassword {
 
     pub fn new(length: usize, sbl_cnt: usize, num_cnt: usize) -> Self {
-        RandomPassword { length, sbl_cnt, num_cnt, content: None }
+        RandomPassword { length, sbl_cnt, num_cnt, content: String::from("") }
     }
 
-    pub fn show(&mut self) -> &str {
+    pub fn show(&mut self) -> String {
         let mut rng = rand::thread_rng();
         let data = _DATA();
-        let mut PWD = vec![(self.length-self.sbl_cnt-self.num_cnt, data.0), (self.sbl_cnt, data.1), (self.num_cnt, data.2),]
+        let mut PWD = vec![(self.length-self.sbl_cnt-self.num_cnt, data.0), (self.sbl_cnt, data.1), (self.num_cnt, data.2)]
             .iter()
             .map(|args| {
-                _RAND_IDX(args.0, args.1.len()) // generate the random index on corresponding Vec depend on its amount
+                Self::_RAND_IDX(args.0, args.1.len()) // generate the random index on corresponding Vec depend on its amount
                     .iter()
                     .map(|idx| args.1[*idx].clone())// index their values in to Vec<String>
                     .collect()
             })
-            .fold(vec![], |mut acc, mut x| { acc.append(&mut x); acc });
-        // unfold these Vec<Vec<String>> in to Vec<String>
+            .collect::<Vec<Vec<_>>>()
+            .concat();
+            // or
+            //.fold(vec![], |mut acc, mut x| { acc.append(&mut x); acc });
+
         PWD.shuffle(&mut rng);
-        self.content = Some(PWD.join(""));
-        self.content.as_ref().expect("Should have a password here")
+        self.content = PWD.join("");
+        self.content.clone()
+    }
+
+    #[inline]
+    fn _RAND_IDX(n: usize, cnt: usize) -> Vec<usize> {
+        let mut rng = rand::thread_rng();
+        let mut idx;
+        let mut idxs = vec![];
+        for _ in 0..n {
+            idx = rng.gen_range(0, cnt);
+            idxs.push(idx);
+        }
+        idxs
     }
 }
 
@@ -46,16 +61,6 @@ const _GEN: fn(Vec<(u8, u8)>) -> Vec<String> = |range_list| {
     all
 };
 
-const _RAND_IDX: fn(usize, usize) -> Vec<usize> = |n, cnt| { // Given the amount and upper bound, generate the random index
-    let mut rng = rand::thread_rng();
-    let mut idx;
-    let mut idxs = vec![];
-    for _ in 0..n {
-        idx = rng.gen_range(0, cnt);
-        idxs.push(idx);
-    }
-    idxs
-};
 
 const _DATA: fn() -> (Vec<String>, Vec<String>, Vec<String>) = || {
     let letters: Vec<String> = _GEN(vec![(65, 90), (97, 122)]);
@@ -65,6 +70,17 @@ const _DATA: fn() -> (Vec<String>, Vec<String>, Vec<String>) = || {
     (letters, symbols, numbers)
 };
 
+
+// const _RAND_IDX: fn(usize, usize) -> Vec<usize> = |n, cnt| { // Given the amount and upper bound, generate the random index
+//     let mut rng = rand::thread_rng();
+//     let mut idx;
+//     let mut idxs = vec![];
+//     for _ in 0..n {
+//         idx = rng.gen_range(0, cnt);
+//         idxs.push(idx);
+//     }
+//     idxs
+// };
 
 #[cfg(test)]
 mod tests {

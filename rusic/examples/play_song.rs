@@ -29,10 +29,10 @@ fn main() {
         }
 
         let music_file = play_list[&num.trim().parse::<i32>().unwrap()].to_str().unwrap();
-        println!("Playing {}\nTime {:?}", music_file, get_music_time(music_file));
+        let music_time = get_music_time(music_file);
+        println!("Playing {}\tTime: {:>2}m {:0>2}s", music_file, music_time.0, music_time.1);
 
         _play(music_file);
-
 
     }
 
