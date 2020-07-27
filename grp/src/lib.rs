@@ -145,40 +145,6 @@ impl RandomPassword
     }
 }
 
-// const _GEN: fn(Vec<(u8, u8)>) -> Vec<String> = |range_list| {
-//     let mut all = vec![];
-//     for (start, end) in range_list {
-//         let mut v = (start..=end)
-//             .collect::<Vec<_>>()
-//             .iter()
-//             .map(|asc_num| (*asc_num as char).to_string())
-//             .collect();
-//         all.append(&mut v);
-//     }
-//     all
-// };
-
-
-// const _DATA: fn() -> (Vec<String>, Vec<String>, Vec<String>) = || {
-//     let letters: Vec<String> = _GEN(vec![(65, 90), (97, 122)]);
-//     let symbols: Vec<String> = _GEN(vec![(33, 47), (58, 64), (91, 96), (123, 126)]);
-//     let numbers: Vec<String> = _GEN(vec![(48, 57)]);
-
-//     (letters, symbols, numbers)
-// };
-
-
-// const _RAND_IDX: fn(usize, usize) -> Vec<usize> = |n, cnt| { // Given the amount and upper bound, generate the random index
-//     let mut rng = rand::thread_rng();
-//     let mut idx;
-//     let mut idxs = vec![];
-//     for _ in 0..n {
-//         idx = rng.gen_range(0, cnt);
-//         idxs.push(idx);
-//     }
-//     idxs
-// };
-
 
 #[cfg(test)]
 mod tests {

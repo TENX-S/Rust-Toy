@@ -1,16 +1,18 @@
 #![allow(unused)]
+#![feature(const_fn)]
 
 extern crate dirs;
 extern crate sys_info;
 
 use grp::*;
+use whoami::username;
 use chrono::prelude::*;
 use std::{
+    cmp::max,
     io::prelude::*,
     env, path::Path,
     fs::{ File, OpenOptions }
 };
-
 
 
 fn main()
@@ -24,7 +26,7 @@ fn main()
     if !requirement.is_empty()
     {
 
-        let (length,                 sbl_cnt,                num_cnt)
+        let (length,                 sbl_cnt,                num_cnt               )
             =
             (requirement[0].clone(), requirement[1].clone(), requirement[2].clone());
 
@@ -41,8 +43,16 @@ fn main()
     }
 
     else // Default
+
     {
-        println!("{}", RandomPassword::new(12, 1, 3).show());
+        let rp = RandomPassword::new(12, 1, 3).show();
+        let head = format!("{} - {}", now_time(), username()).to_owned();
+        let width = max(head.len(), rp.len());
+
+        println!(
+            "\n{:=<width$}\n\n{}\n{}\n\n{:=<width$}\n",
+               "",            head,rp,  "",width=width
+        );
     }
 
 }
@@ -63,12 +73,6 @@ fn save_to_desktop(rp: &str) -> std::io::Result<()>
         _ => ()
     }
 
-    // if cfg!(target_os = "macos") {
-    //     filepath = format!("{}/random_password.txt", home.to_str().unwrap());
-    // } else if cfg!(target_os = "windows") {
-    //     filepath = format!("{}\\random_password.txt", home.to_str().unwrap());
-    // }
-
     let mut file: File;
 
     if !Path::new(filepath.as_str()).exists()
@@ -80,8 +84,24 @@ fn save_to_desktop(rp: &str) -> std::io::Result<()>
                        .append(true)
                        .open(filepath.as_str())?;
 
-    writeln!(&mut file, "{}\n{}\n", now_time(), rp)?;
-    println!("Password is saved to {}", filepath.as_str());
+
+    let head = format!("{} - {}", now_time(), username()).to_owned();
+    let width = max(head.len(), rp.len());
+    let result = writeln!(&mut file,
+                    "\n{:=<width$}\n\n{}\n{}\n\n{:=<width$}\n",
+                       "",            head,rp, "", width=width
+                ).is_ok();
+
+    if result
+    {
+        println!("Password is saved to {}", filepath.as_str());
+    }
+
+    else
+    {
+        println!("Failed to save the password to {}", filepath.as_str());
+    }
+
 
     Ok(())
 
