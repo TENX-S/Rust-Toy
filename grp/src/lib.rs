@@ -18,7 +18,7 @@ impl RandomPassword
 {
 
     /// Return an instance of RandomPassword
-    pub fn new(length: impl ToBigUint, sbl_cnt: impl ToBigUint, num_cnt: impl ToBigUint) -> Self
+    pub fn new<T: ToBigUint>(length: T, sbl_cnt: T, num_cnt: T) -> Self
 
     {
 
