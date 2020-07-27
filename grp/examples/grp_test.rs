@@ -24,7 +24,7 @@ fn main()
     if !requirement.is_empty()
     {
 
-        let (length,                 sbl_cnt,                num_cnt)
+        let (length,                 sbl_cnt,                num_cnt               )
             =
             (requirement[0].clone(), requirement[1].clone(), requirement[2].clone());
 
