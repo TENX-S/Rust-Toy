@@ -17,9 +17,9 @@ fn main()
 {
 
     let requirement = env::args()
-                                      .skip(1)
-                                      .map(|arg| arg.parse::<BigUint>().expect("Should be positive"))
-                                      .collect::<Vec<_>>(); // get the user's input and parse them into numbers which should be positive
+                          .skip(1)
+                          .map(|arg| arg.parse::<BigUint>().expect("Should be positive"))
+                          .collect::<Vec<_>>(); // get the user's input and parse them into numbers which should be positive
 
     if !requirement.is_empty()
     {
