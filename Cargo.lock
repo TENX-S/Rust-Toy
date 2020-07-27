@@ -410,6 +410,7 @@ dependencies = [
  "chrono",
  "dirs",
  "num-bigint",
+ "num-traits",
  "rand",
  "sys-info",
 ]

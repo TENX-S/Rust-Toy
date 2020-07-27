@@ -12,8 +12,10 @@ keywords = ["password", "random", "random password"]
 
 
 [dependencies]
+
 dirs = "3.0"
 chrono = "0.4"
 rand = "0.7.3"
 sys-info = "0.7.0"
 num-bigint = "0.3.0"
+num-traits = "0.2"

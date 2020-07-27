@@ -24,7 +24,7 @@ fn main()
     if !requirement.is_empty()
     {
 
-        let (length,                 sbl_cnt,                num_cnt               )
+        let (length,                 sbl_cnt,                num_cnt)
             =
             (requirement[0].clone(), requirement[1].clone(), requirement[2].clone());
 
@@ -72,8 +72,6 @@ fn save_to_desktop(rp: &str) -> std::io::Result<()>
     let mut file: File;
 
     if !Path::new(filepath.as_str()).exists()
-        &&
-        Path::new(filepath.as_str()).is_file()
     {
         file = File::create(filepath.as_str())?;
     }
@@ -83,6 +81,7 @@ fn save_to_desktop(rp: &str) -> std::io::Result<()>
                        .open(filepath.as_str())?;
 
     writeln!(&mut file, "{}\n{}\n", now_time(), rp)?;
+    println!("Password is saved to {}", filepath.as_str());
 
     Ok(())
 

@@ -1,7 +1,12 @@
 #![allow(non_snake_case)]
 
+
 use rand::prelude::*;
+use num_traits::{ Zero, One };
 pub use num_bigint::{ BigUint, ToBigUint };
+
+
+
 
 pub struct RandomPassword
 {
@@ -94,11 +99,12 @@ impl RandomPassword
         let mut idx;
         let mut idxs = vec![];
 
-        while n != 0.to_biguint().unwrap()
+
+        while n != BigUint::zero()
         {
             idx = rng.gen_range(0, cnt);
             idxs.push(idx);
-            n -= 1.to_biguint().unwrap();
+            n -= BigUint::one();
         }
 
         idxs
@@ -114,10 +120,12 @@ impl RandomPassword
 
         for (start, end) in range_list
         {
-            let mut v = (start..=end).collect::<Vec<_>>()
-                                                .iter()
-                                                .map(|asc_num| (*asc_num as char).to_string())
-                                                .collect();
+            let mut v = (start..=end)
+                        .collect::<Vec<_>>()
+                        .iter()
+                        .map(|asc_num| (*asc_num as char).to_string())
+                        .collect();
+
             all.append(&mut v);
         }
 
