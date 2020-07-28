@@ -6,7 +6,7 @@ use num_traits::{ Zero, One };
 pub use num_bigint::{ BigUint, ToBigUint };
 
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct RandomPassword
 {
     length: BigUint,

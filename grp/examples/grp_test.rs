@@ -1,5 +1,4 @@
 #![allow(unused)]
-#![feature(const_fn)]
 
 extern crate dirs;
 extern crate sys_info;
