@@ -29,23 +29,12 @@ fn main()
         let (length,                 sbl_cnt,                num_cnt               )
             =
             (requirement[0].clone(), requirement[1].clone(), requirement[2].clone());
-
-        if length >= sbl_cnt.clone() + num_cnt.clone()
-        {
-            save_to_desktop(&RandomPassword::new(length, sbl_cnt, num_cnt).show());
-        }
-
-        else
-        {
-            println!("Invalid input!!");
-        }
-
+        save_to_desktop(&RandomPassword::new(length, sbl_cnt, num_cnt).unwrap().show());
     }
 
     else // Default
-
     {
-        let rp = RandomPassword::new(12, 1, 3).show();
+        let rp = RandomPassword::new(10, 2, 3).unwrap().show();
         let head = format!("{} - {}", now_time(), username()).to_owned();
         let width = max(head.len(), rp.len());
 
@@ -101,7 +90,6 @@ fn save_to_desktop(rp: &str) -> std::io::Result<()>
     {
         println!("Failed to save the password to {}", filepath.as_str());
     }
-
 
     Ok(())
 

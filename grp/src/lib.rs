@@ -1,39 +1,71 @@
 #![allow(non_snake_case)]
 
-
+use std::ops::Add;
 use rand::prelude::*;
 use num_traits::{ Zero, One };
 pub use num_bigint::{ BigUint, ToBigUint };
 
 
-
-
+#[derive(Debug)]
 pub struct RandomPassword
 {
-
     length: BigUint,
     sbl_cnt: BigUint,
     num_cnt: BigUint,
     content: String,
-
 }
 
 
 impl RandomPassword
 {
 
-    /// Return an instance of RandomPassword
-    pub fn new<T: ToBigUint>(length: T, sbl_cnt: T, num_cnt: T) -> Self
-
+    /// Return an instance of `Result<RandomPassword>`
+    /// # Example
+    /// ```
+    /// let rp_1 = RandomPassword::new(11, 4, 2); // ok
+    ///
+    /// let rp_2 = RandomPassword::new(-1, 0, 0);
+    /// assert_eq!(rp_2.err(), Err("`length`, `sbl_cnt` and `num_cnt` should all be positive"));
+    ///
+    /// let rp_3 = RandomPassword::new(3, 3, 3);
+    /// assert_eq!(rp_3.err(), Err("`length` should be greater than or equal to `sbl_cnt` plus `num_cnt`"));
+    /// ```
+    ///
+    #[inline]
+    pub fn new<T>(length: T, sbl_cnt: T, num_cnt: T) -> Result<Self, &'static str>
+    where T: ToBigUint + Add<Output=T> + PartialOrd + Clone
     {
+        let l = length.to_biguint();
+        let s = sbl_cnt.to_biguint();
+        let n = num_cnt.to_biguint();
 
-        RandomPassword {
 
-            length: length.to_biguint().unwrap(),
-            sbl_cnt: sbl_cnt.to_biguint().unwrap(),
-            num_cnt: num_cnt.to_biguint().unwrap(),
-            content: String::new(),
+        if !l.is_none() && !s.is_none() && !n.is_none()
+        {
+            let l = l.unwrap();
+            let s = s.unwrap();
+            let n = n.unwrap();
 
+            if l.clone() >= s.clone() + n.clone()
+            {
+                Ok(
+                    RandomPassword
+                    {
+                        length: l,
+                        sbl_cnt: s,
+                        num_cnt: n,
+                        content: String::new(),
+                    }
+                )
+            }
+            else
+            {
+                Err("`length` should be greater than or equal to `sbl_cnt` plus `num_cnt`")
+            }
+        }
+        else
+        {
+            Err("`length`, `sbl_cnt` and `num_cnt` should all be positive")
         }
 
     }
@@ -44,9 +76,9 @@ impl RandomPassword
     /// # Example
     ///
     /// ```
-    /// use crate::grp::*;
     /// let mut rp = RandomPassword::new(10, 2, 3);
-    /// println!("{}", rp.show());
+    /// println!("{}", rp.unwrap().show());
+    /// // Output: +*yz952SwG
     /// ```
     ///
     pub fn show(&mut self) -> String
@@ -86,9 +118,9 @@ impl RandomPassword
     /// # Example
     ///
     /// ```
-    /// use crate::grp::*;
-    /// let random_indexs = _RAND_IDX(5, 10);
+    /// let random_indexs = _RAND_IDX(5.to_biguint().unwrap(), 10);
     /// println!("{:?}", random_indexs);
+    /// // Output: [9, 0, 5, 8, 6]
     /// ```
     ///
     #[inline]
@@ -133,6 +165,7 @@ impl RandomPassword
 
     }
 
+    #[inline]
     fn _DATA() -> (Vec<String>, Vec<String>, Vec<String>)
     {
 
@@ -173,6 +206,19 @@ mod tests {
 
         assert!(ret);
 
+    }
+
+    #[test]
+    fn constructor_works()
+    {
+        let rp1 = RandomPassword::new(12, 1, 1);
+        assert!(rp1.is_ok());
+
+        let rp2 = RandomPassword::new(-1, 1, 1);
+        assert!(rp2.is_err());
+
+        let rp3 = RandomPassword::new(2, 2, 2);
+        assert!(rp3.is_err());
     }
 
 }
