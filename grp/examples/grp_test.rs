@@ -30,17 +30,17 @@ fn main()
             (requirement[0].clone(), requirement[1].clone(), requirement[2].clone());
         save_to_desktop(&RandomPassword::new(length, sbl_cnt, num_cnt).unwrap().show());
     }
-
     else // Default
     {
         let rp = RandomPassword::new(10, 2, 3).unwrap().show();
         let head = format!("{} - {}", now_time(), username()).to_owned();
         let width = max(head.len(), rp.len());
 
-        println!(
-            "\n{:=<width$}\n\n{}\n{}\n\n{:=<width$}\n",
-               "",            head,rp,  "",width=width
-        );
+        // println!(
+        //     "\n{:=<width$}\n\n{}\n{}\n\n{:=<width$}\n",
+        //        "",            head,rp,  "",width=width
+        // );
+        println!("\n{}\n{}\n", head, rp);
     }
 
 }
@@ -75,10 +75,7 @@ fn save_to_desktop(rp: &str) -> std::io::Result<()>
 
     let head = format!("{} - {}", now_time(), username()).to_owned();
     let width = max(head.len(), rp.len());
-    let result = writeln!(&mut file,
-                    "\n{:=<width$}\n\n{}\n{}\n\n{:=<width$}\n",
-                       "",            head,rp, "", width=width
-                ).is_ok();
+    let result = writeln!(&mut file, "\n{}\n{}\n", head, rp).is_ok();
 
     if result
     {
