@@ -14,24 +14,22 @@ use std::{
 };
 
 
-fn main()
-{
+fn main() {
 
     let requirement = env::args()
                           .skip(1)
                           .map(|arg| arg.parse::<BigUint>().expect("Should be positive"))
                           .collect::<Vec<_>>(); // get the user's input and parse them into numbers which should be positive
 
-    if !requirement.is_empty()
-    {
+
+    if !requirement.is_empty() {
 
         let (length,                 sbl_cnt,                num_cnt               )
             =
             (requirement[0].clone(), requirement[1].clone(), requirement[2].clone());
         save_to_desktop(&RandomPassword::new(length, sbl_cnt, num_cnt).unwrap().show());
     }
-    else // Default
-    {
+    else { // Default
         let rp = RandomPassword::new(10, 2, 3).unwrap().show();
         let head = format!("{} - {}", now_time(), username()).to_owned();
         let width = max(head.len(), rp.len());
@@ -40,20 +38,19 @@ fn main()
         //     "\n{:=<width$}\n\n{}\n{}\n\n{:=<width$}\n",
         //        "",            head,rp,  "",width=width
         // );
-        println!("\n{}\n{}\n", head, rp);
+        println!("\n{}\n{}", head, rp);
     }
 
 }
 
 
-fn save_to_desktop(rp: &str) -> std::io::Result<()>
-{
+fn save_to_desktop(rp: &str) -> std::io::Result<()> {
 
     let home = dirs::desktop_dir().unwrap();
     let mut filepath = String::new();
 
-    match sys_info::os_type().unwrap().as_str()
-    {
+    match sys_info::os_type().unwrap().as_str() {
+
         "Darwin" | "Linux" => { filepath = format!("{}/random_password.txt", home.to_str().unwrap()); },
 
         "Windows" => { filepath = format!("{}\\random_password.txt", home.to_str().unwrap()); },
@@ -63,8 +60,8 @@ fn save_to_desktop(rp: &str) -> std::io::Result<()>
 
     let mut file: File;
 
-    if !Path::new(filepath.as_str()).exists()
-    {
+    if !Path::new(filepath.as_str()).exists() {
+
         file = File::create(filepath.as_str())?;
     }
 
@@ -77,14 +74,14 @@ fn save_to_desktop(rp: &str) -> std::io::Result<()>
     let width = max(head.len(), rp.len());
     let result = writeln!(&mut file, "\n{}\n{}\n", head, rp).is_ok();
 
-    if result
-    {
-        println!("Password is saved to {}", filepath.as_str());
-    }
+    if result {
 
-    else
-    {
+        println!("Password is saved to {}", filepath.as_str());
+
+    } else {
+
         println!("Failed to save the password to {}", filepath.as_str());
+
     }
 
     Ok(())
