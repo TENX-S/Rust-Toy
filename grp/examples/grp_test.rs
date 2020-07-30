@@ -38,7 +38,7 @@ fn main() {
         //     "\n{:=<width$}\n\n{}\n{}\n\n{:=<width$}\n",
         //        "",            head,rp,  "",width=width
         // );
-        println!("\n{}\n{}", head, rp);
+        println!("\n{}\n{}\n", head, rp);
     }
 
 }
@@ -46,14 +46,15 @@ fn main() {
 
 fn save_to_desktop(rp: &str) -> std::io::Result<()> {
 
-    let home = dirs::desktop_dir().unwrap();
+    let _desktop = dirs::desktop_dir().unwrap();
+
     let mut filepath = String::new();
 
     match sys_info::os_type().unwrap().as_str() {
 
-        "Darwin" | "Linux" => { filepath = format!("{}/random_password.txt", home.to_str().unwrap()); },
+        "Darwin" | "Linux" => { filepath = format!("{}/random_password.txt", _desktop.to_str().unwrap()); },
 
-        "Windows" => { filepath = format!("{}\\random_password.txt", home.to_str().unwrap()); },
+        "Windows" => { filepath = format!("{}\\random_password.txt", _desktop.to_str().unwrap()); },
 
         _ => ()
     }

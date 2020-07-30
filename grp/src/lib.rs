@@ -5,7 +5,7 @@ use rand::prelude::*;
 use num_traits::{ Zero, One };
 pub use num_bigint::{ BigUint, ToBigUint };
 
-
+/// struct `RandomPassword`
 #[derive(Clone, Debug)]
 pub struct RandomPassword {
     length: BigUint,
@@ -43,6 +43,7 @@ impl RandomPassword {
     #[inline]
     pub fn new<T>(length: T, sbl_cnt: T, num_cnt: T) -> Result<Self, &'static str>
         where T: ToBigUint + Add<Output=T> + PartialOrd + Clone {
+
         let l = length.to_biguint();
         let s = sbl_cnt.to_biguint();
         let n = num_cnt.to_biguint();
@@ -78,30 +79,31 @@ impl RandomPassword {
     /// // Output: +*yz952SwG
     /// ```
     ///
+    #[inline]
     pub fn show(&mut self) -> String {
 
-        let mut rng = rand::thread_rng();
         let data = Self::_DATA();
+
         let mut PWD =
             vec![
                 (self.length.clone()-self.sbl_cnt.clone()-self.num_cnt.clone(), data.0),
                 (self.sbl_cnt.clone(), data.1),
                 (self.num_cnt.clone(), data.2)
-            ]
-            .iter()
-            .map(|args|
-                {   // generate the random index on corresponding Vec depend on its amount
-                    Self::_RAND_IDX(args.0.clone(), args.1.len())
-                         .iter()
-                         .map(|idx| args.1[*idx].clone())// index their values in to Vec<String>
-                         .collect()
-                })
-            .collect::<Vec<Vec<_>>>()
-            .concat();
-            // or
-            //.fold(vec![], |mut acc, mut x| { acc.append(&mut x); acc });
+            ].iter()
+             .map(|args| {   // generate the random index on corresponding Vec depend on its amount
+                     Self::_RAND_IDX(args.0.clone(), args.1.len())
+                          .iter()
+                          .map(|idx| args.1[*idx].clone())// index their values in to Vec<String>
+                          .collect()
+                 })
+             .collect::<Vec<Vec<_>>>()
+             .concat();
+             // or
+             //.fold(vec![], |mut acc, mut x| { acc.append(&mut x); acc });
 
+        let mut rng = rand::thread_rng();
         PWD.shuffle(&mut rng);
+
         self.content = PWD.join("");
 
         self.content.clone()
@@ -143,11 +145,10 @@ impl RandomPassword {
         let mut all = vec![];
 
         for (start, end) in range_list {
-            let mut v = (start..=end)
-                        .collect::<Vec<_>>()
-                        .iter()
-                        .map(|asc_num| (*asc_num as char).to_string())
-                        .collect();
+            let mut v = (start..=end).collect::<Vec<_>>()
+                                     .iter()
+                                     .map(|asc_num| (*asc_num as char).to_string())
+                                     .collect();
 
             all.append(&mut v);
         }
@@ -171,6 +172,7 @@ impl RandomPassword {
 
 #[cfg(test)]
 mod tests {
+
     use super::*;
 
     #[test]
@@ -187,10 +189,10 @@ mod tests {
     fn _RAND_IDX_works() {
 
         let ret = RandomPassword::_RAND_IDX(10_000.to_biguint().unwrap(), 100_0000)
-                                      .iter()
-                                      .filter(|x| **x > 100_0000)
-                                      .collect::<Vec<&usize>>()
-                                      .is_empty();
+                                 .iter()
+                                 .filter(|x| **x > 100_0000)
+                                 .collect::<Vec<&usize>>()
+                                 .is_empty();
 
         assert!(ret);
 
@@ -198,6 +200,10 @@ mod tests {
 
     #[test]
     fn constructor_works() {
+
+        let rp0 = RandomPassword::new(0, 0, 0);
+        assert!(rp0.is_ok());
+
         let rp1 = RandomPassword::new(12, 1, 1);
         assert!(rp1.is_ok());
 
