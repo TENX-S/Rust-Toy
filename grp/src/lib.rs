@@ -7,8 +7,7 @@ pub use num_bigint::{ BigUint, ToBigUint };
 
 
 #[derive(Clone, Debug)]
-pub struct RandomPassword
-{
+pub struct RandomPassword {
     length: BigUint,
     sbl_cnt: BigUint,
     num_cnt: BigUint,
@@ -16,8 +15,7 @@ pub struct RandomPassword
 }
 
 
-impl RandomPassword
-{
+impl RandomPassword {
 
     /// Return an instance of `Result<RandomPassword>`
     /// # Example
