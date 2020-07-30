@@ -55,10 +55,10 @@ impl RandomPassword {
 
             if l.clone() >= s.clone() + n.clone() {
                 Ok(RandomPassword {
-                        length: l,
-                        sbl_cnt: s,
-                        num_cnt: n,
-                        content: String::new(),
+                    length: l,
+                    sbl_cnt: s,
+                    num_cnt: n,
+                    content: String::new(),
                 })
             } else {
                 Err("`length` should be greater than or equal to `sbl_cnt` plus `num_cnt`")
