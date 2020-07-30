@@ -28,8 +28,7 @@ fn main() {
             =
             (requirement[0].clone(), requirement[1].clone(), requirement[2].clone());
         save_to_desktop(&RandomPassword::new(length, sbl_cnt, num_cnt).unwrap().show());
-    }
-    else { // Default
+    } else { // Default
         let rp = RandomPassword::new(10, 2, 3).unwrap().show();
         let head = format!("{} - {}", now_time(), username()).to_owned();
         let width = max(head.len(), rp.len());
