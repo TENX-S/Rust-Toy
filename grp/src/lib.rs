@@ -17,7 +17,7 @@ pub struct RandomPassword {
 
 impl RandomPassword {
 
-    /// Return an instance of `Result<RandomPassword>`
+    /// Return an instance of `Result<RandomPassword, &'static str>`
     /// # Example
     /// ```
     /// use grp::{RandomPassword, BigUint};
@@ -93,12 +93,11 @@ impl RandomPassword {
                 (self.sbl_cnt.clone(), data.1),
                 (self.num_cnt.clone(), data.2)
             ].iter()
-             .map(|args| {   // generate the random index on corresponding Vec depend on its amount
+             .map(|args| { // generate the random index on corresponding Vec depend on its amount
                      Self::_RAND_IDX(args.0.clone(), args.1.len())
                           .iter()
                           .map(|idx| args.1[*idx].clone())// index their values in to Vec<String>
-                          .collect()
-                 })
+                          .collect() })
              .collect::<Vec<Vec<_>>>()
              .concat();
              // or
@@ -118,14 +117,15 @@ impl RandomPassword {
     /// # Example
     ///
     /// ```
-    /// let random_indexs = _RAND_IDX(5.to_biguint().unwrap(), 10);
+    /// let random_indexs = _RAND_IDX(5, 10);
     /// println!("{:?}", random_indexs);
     /// // Output: [9, 0, 5, 8, 6]
     /// ```
     ///
     #[inline]
-    fn _RAND_IDX(mut n: BigUint, cnt: usize) -> Vec<usize> {
+    fn _RAND_IDX(n: impl ToBigUint, cnt: usize) -> Vec<usize> {
 
+        let mut n = n.to_biguint().unwrap();
         let mut rng = rand::thread_rng();
         let mut idx;
         let mut idxs = vec![];
@@ -192,9 +192,9 @@ mod tests {
     fn _RAND_IDX_works() {
 
         let ret = RandomPassword::_RAND_IDX(10_000.to_biguint().unwrap(), 100_0000)
-                                 .iter()
-                                 .filter(|x| **x > 100_0000)
-                                 .collect::<Vec<&usize>>()
+                                 .into_iter()
+                                 .filter(|x| *x > 100_0000)
+                                 .collect::<Vec<_>>()
                                  .is_empty();
 
         assert!(ret);
@@ -215,6 +215,7 @@ mod tests {
 
         let rp3 = RandomPassword::new(2, 2, 2);
         assert!(rp3.is_err());
+
     }
 
 }

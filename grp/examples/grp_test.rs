@@ -7,16 +7,16 @@ use grp::*;
 use whoami::username;
 use chrono::prelude::*;
 use std::{
-    error,
+    env,
     cmp::max,
+    path::Path,
+    error::Error,
     io::prelude::*,
-    env, path::Path,
     fs::{ File, OpenOptions }
 };
-use std::borrow::Borrow;
 
 
-fn main() -> Result<(), Box<dyn error::Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
 
     let requirement = env::args()
                           .skip(1)
@@ -28,12 +28,13 @@ fn main() -> Result<(), Box<dyn error::Error>> {
         let (length,                 sbl_cnt,                num_cnt               )
             =
             (requirement[0].clone(), requirement[1].clone(), requirement[2].clone());
+
         save_to_desktop(&RandomPassword::new(length, sbl_cnt, num_cnt)?.show());
 
     } else { // Default
 
         let rp = RandomPassword::new(10, 2, 3)?.show();
-        let head = format!("{} - {}", now_time(), username()).to_owned();
+        let head = format!("{} - {}", now_time(), username());
         let width = max(head.len(), rp.len());
 
         println!("\n{}\n{}\n", head, rp);
@@ -45,7 +46,7 @@ fn main() -> Result<(), Box<dyn error::Error>> {
 }
 
 
-fn save_to_desktop(rp: &str) -> Result<(), Box<dyn error::Error>> {
+fn save_to_desktop(rp: &str) -> Result<(), Box<dyn Error>> {
 
     let _desktop = dirs::desktop_dir().unwrap();
 
