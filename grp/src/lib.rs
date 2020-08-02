@@ -29,6 +29,7 @@ impl RandomPassword {
     /// // If you want push a large number in it
     /// // parse the `&str` into `Biguint`
     /// let length = format!("{}000", usize::MAX).parse::<BigUint>().unwrap();
+    /// //or let length = BigUint::from_str(format!("{}000", usize::MAX)).unwrap();
     /// let sbl_cnt = format!("{}00", usize::MAX).parse::<BigUint>().unwrap();
     /// let num_cnt = format!("{}0", usize::MAX).parse::<BigUint>().unwrap();
     /// let rp_1_2 = RandomPassword::new(length, sbl_cnt, num_cnt);
