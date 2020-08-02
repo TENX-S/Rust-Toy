@@ -21,24 +21,26 @@ impl RandomPassword {
     /// # Example
     /// ```
     /// use grp::{RandomPassword, BigUint};
-    /// let rp_1 = RandomPassword::new(11, 4, 2); // ok
+    /// let rp_1 = RandomPassword::new(11, 4, 2)?; // ok
     ///
     /// let rp_1_1 = RandomPassword::new(11.to_biguint().unwrap(), 4.to_biguint().unwrap(), 2.to_biguint().unwrap());
     /// // It works too, but not recommended
     ///
     /// // If you want push a large number in it
     /// // parse the `&str` into `Biguint`
-    /// let length = format!("{}000", usize::MAX).parse::<BigUint>().unwrap();
-    /// //or let length = BigUint::from_str(format!("{}000", usize::MAX)).unwrap();
-    /// let sbl_cnt = format!("{}00", usize::MAX).parse::<BigUint>().unwrap();
-    /// let num_cnt = format!("{}0", usize::MAX).parse::<BigUint>().unwrap();
-    /// let rp_1_2 = RandomPassword::new(length, sbl_cnt, num_cnt);
+    /// let length = format!("{}000", usize::MAX).parse::<BigUint>()?;
+    /// // or
+    /// // use std::str::FromStr;
+    /// // let length = BigUint::from_str(format!("{}000", usize::MAX))?;
+    /// let sbl_cnt = format!("{}00", usize::MAX).parse::<BigUint>()?;
+    /// let num_cnt = format!("{}0", usize::MAX).parse::<BigUint>()?;
+    /// let rp_1_2 = RandomPassword::new(length, sbl_cnt, num_cnt)?;
     ///
-    /// let rp_2 = RandomPassword::new(-1, 0, 0);
-    /// assert_eq!(rp_2.err(), Err("`length`, `sbl_cnt` and `num_cnt` should all be positive"));
+    /// let rp_2 = RandomPassword::new(-1, 0, 0)?;
+    /// assert_eq!(rp_2, Err("`length`, `sbl_cnt` and `num_cnt` should all be positive"));
     ///
-    /// let rp_3 = RandomPassword::new(3, 3, 3);
-    /// assert_eq!(rp_3.err(), Err("`length` should be greater than or equal to `sbl_cnt` plus `num_cnt`"));
+    /// let rp_3 = RandomPassword::new(3, 3, 3)?;
+    /// assert_eq!(rp_3, Err("`length` should be greater than or equal to `sbl_cnt` plus `num_cnt`"));
     /// ```
     ///
     #[inline]
@@ -75,8 +77,8 @@ impl RandomPassword {
     /// # Example
     ///
     /// ```
-    /// let mut rp = RandomPassword::new(10, 2, 3);
-    /// println!("{}", rp.unwrap().show());
+    /// let mut rp = RandomPassword::new(10, 2, 3)?;
+    /// println!("{}", rp.show());
     /// // Output: +*yz952SwG
     /// ```
     ///

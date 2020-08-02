@@ -7,49 +7,51 @@ use grp::*;
 use whoami::username;
 use chrono::prelude::*;
 use std::{
+    error,
     cmp::max,
     io::prelude::*,
     env, path::Path,
     fs::{ File, OpenOptions }
 };
+use std::borrow::Borrow;
 
 
-fn main() {
+fn main() -> Result<(), Box<dyn error::Error>> {
 
     let requirement = env::args()
                           .skip(1)
                           .map(|arg| arg.parse::<BigUint>().expect("Should be positive"))
-                          .collect::<Vec<_>>(); // get the user's input and parse them into numbers which should be positive
-
+                          .collect::<Vec<_>>();
 
     if !requirement.is_empty() {
 
         let (length,                 sbl_cnt,                num_cnt               )
             =
             (requirement[0].clone(), requirement[1].clone(), requirement[2].clone());
-        save_to_desktop(&RandomPassword::new(length, sbl_cnt, num_cnt).unwrap().show());
+        save_to_desktop(&RandomPassword::new(length, sbl_cnt, num_cnt)?.show());
+
     } else { // Default
-        let rp = RandomPassword::new(10, 2, 3).unwrap().show();
+
+        let rp = RandomPassword::new(10, 2, 3)?.show();
         let head = format!("{} - {}", now_time(), username()).to_owned();
         let width = max(head.len(), rp.len());
 
-        // println!(
-        //     "\n{:=<width$}\n\n{}\n{}\n\n{:=<width$}\n",
-        //        "",            head,rp,  "",width=width
-        // );
         println!("\n{}\n{}\n", head, rp);
+
     }
+
+    Ok(())
 
 }
 
 
-fn save_to_desktop(rp: &str) -> std::io::Result<()> {
+fn save_to_desktop(rp: &str) -> Result<(), Box<dyn error::Error>> {
 
     let _desktop = dirs::desktop_dir().unwrap();
 
     let mut filepath = String::new();
 
-    match sys_info::os_type().unwrap().as_str() {
+    match sys_info::os_type()?.as_str() {
 
         "Darwin" | "Linux" => { filepath = format!("{}/random_password.txt", _desktop.to_str().unwrap()); },
 
