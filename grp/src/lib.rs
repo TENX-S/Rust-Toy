@@ -105,16 +105,13 @@ impl RandomPassword {
                             Self::_RAND_IDX(*cnt, data.len())
                                 .iter()
                                 .map(|idx| data[*idx].clone())
-                                .collect::<String>()
+                                .collect::<Vec<String>>()
                         })
                         .collect()
                 })
                     .collect::<Vec<Vec<_>>>()
                     .concat()
-                    .join("")
-                    .chars()
-                    .map(|ch| ch.to_string())
-                    .collect();
+                    .concat();
 
         let mut rng = thread_rng();
         PWD.shuffle(&mut rng);
