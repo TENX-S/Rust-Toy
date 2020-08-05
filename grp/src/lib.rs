@@ -103,7 +103,7 @@ impl RandomPassword {
                         .par_iter()
                         .map(|cnt| {
                             Self::_RAND_IDX(*cnt, data.len())
-                                .iter()
+                                .par_iter()
                                 .map(|idx| data[*idx].clone())
                                 .collect::<String>()
                         })
@@ -116,7 +116,6 @@ impl RandomPassword {
         let mut rng = thread_rng();
 
         let bytes;
-
         unsafe {
             bytes = PWD.as_bytes_mut();
         }
@@ -130,15 +129,20 @@ impl RandomPassword {
 
     }
 
+
+    /// Decompose large numbers into smaller numbers to use more CPU
     #[inline]
     fn _DIV_UNIT<T>(n: T) -> Vec<usize>
         where T: ToBigUint + Add<Output=T> + SubAssign + PartialOrd + Clone + Display
     {
 
         let mut n = n.to_biguint().unwrap();
+
+        // The value of UNIT is inversely proportional to memory overhead
+        // In order to increase CPU time and reduce the memory overhead, raise the value of `UNIT`
         let UNIT = i8::MAX.to_biguint().unwrap();
 
-        let mut ret = vec![];
+        let mut ret = Vec::new();
 
         loop {
 
@@ -171,7 +175,7 @@ impl RandomPassword {
         let mut n = n.to_biguint().unwrap();
         let mut rng = thread_rng();
         let mut idx;
-        let mut idxs = vec![];
+        let mut idxs = Vec::new();
 
 
         while n != BigUint::zero() {
@@ -188,7 +192,7 @@ impl RandomPassword {
     #[inline]
     fn _GEN(range_list: Vec<(u8, u8)>) -> Vec<String> {
 
-        let mut all = vec![];
+        let mut all = Vec::new();
 
         for (start, end) in range_list {
             let mut v = (start..=end).collect::<Vec<_>>()
@@ -203,6 +207,7 @@ impl RandomPassword {
 
     }
 
+    /// Range of character set
     #[inline]
     fn _DATA() -> (Vec<String>, Vec<String>, Vec<String>) {
 
