@@ -1,9 +1,13 @@
 #![allow(non_snake_case)]
 
-use std::ops::Add;
+
 use rand::prelude::*;
+use rayon::prelude::*;
 use num_traits::{ Zero, One };
 pub use num_bigint::{ BigUint, ToBigUint };
+use std::{ fmt::Display, ops::{ Add, SubAssign } };
+
+
 
 /// struct `RandomPassword`
 #[derive(Clone, Debug)]
@@ -88,20 +92,27 @@ impl RandomPassword {
         let data = Self::_DATA();
 
         let mut PWD =
-            vec![
-                (self.length.clone()-self.sbl_cnt.clone()-self.num_cnt.clone(), data.0),
-                (self.sbl_cnt.clone(), data.1),
-                (self.num_cnt.clone(), data.2)
-            ].iter()
-             .map(|args| { // generate the random index on corresponding Vec depend on its amount
-                     Self::_RAND_IDX(args.0.clone(), args.1.len())
-                          .iter()
-                          .map(|idx| args.1[*idx].clone())// index their values in to Vec<String>
-                          .collect() })
-             .collect::<Vec<Vec<_>>>()
-             .concat();
-             // or
-             //.fold(vec![], |mut acc, mut x| { acc.append(&mut x); acc });
+                vec![
+                    (self.length.clone()-self.sbl_cnt.clone()-self.num_cnt.clone(), data.0),
+                    (self.sbl_cnt.clone(), data.1),
+                    (self.num_cnt.clone(), data.2)
+                ]
+                .iter()
+                .map(|(bignum, data)| {
+                    Self::_DIV_UNIT((*bignum).clone())
+                        .par_iter()
+                        .map(|cnt| {
+                            Self::_RAND_IDX(*cnt, data.len())
+                                .iter()
+                                .map(|idx| data[*idx].clone())
+                                .collect::<String>()
+                        })
+                        .collect()
+                })
+                .collect::<Vec<Vec<_>>>()
+                .concat();
+                // or
+                //.fold(vec![], |mut acc, mut x| { acc.append(&mut x); acc });
 
         let mut rng = rand::thread_rng();
         PWD.shuffle(&mut rng);
@@ -109,6 +120,30 @@ impl RandomPassword {
         self.content = PWD.join("");
 
         self.content.clone()
+
+    }
+
+    #[inline]
+    fn _DIV_UNIT<T>(n: T) -> Vec<usize>
+        where T: ToBigUint + Add<Output=T> + SubAssign + PartialOrd + Clone + Display {
+
+        let mut n = n.to_biguint().unwrap();
+        let UMAX: BigUint = u8::MAX.to_biguint().unwrap();
+
+        let mut ret = vec![];
+
+        loop {
+
+            if n < UMAX.clone() {
+                ret.push(format!("{}", n).parse::<usize>().unwrap());
+                break;
+            } else {
+                n -= UMAX.clone();
+                ret.push(u8::MAX);
+            }
+        }
+
+        ret
 
     }
 
@@ -215,6 +250,19 @@ mod tests {
 
         let rp3 = RandomPassword::new(2, 2, 2);
         assert!(rp3.is_err());
+
+    }
+
+    #[test]
+    fn _DIV_UNIT_works() {
+
+        let mut bignum = format!("{}0", usize::MAX).parse::<BigUint>().unwrap();
+        bignum += 1.to_biguint().unwrap();
+        println!("{} divide into {:?}", bignum.clone(), RandomPassword::_DIV_UNIT(bignum));
+
+        let smallnum = 0;
+
+        println!("{} divide into {:?}", smallnum, RandomPassword::_DIV_UNIT(smallnum));
 
     }
 

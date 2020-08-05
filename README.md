@@ -8,7 +8,8 @@ Rust ≥ 1.44.0
 
 ## Utilities
 - [x] [Generate random password](https://github.com/TENX-S/Rust-demo/tree/master/grp)
-- - [x] unlimited numbers
+- - [x] Multi-threads (Incredible speed)
+- - [x] Unlimited numbers
 - [x] [Decrypt ncm file](https://github.com/TENX-S/Rust-demo/tree/master/decrypt_ncm)
 - - [x] Multi-threads
 - [x] Exp! - [Play music in terminal](https://github.com/TENX-S/Rust-demo/tree/master/rusic)
