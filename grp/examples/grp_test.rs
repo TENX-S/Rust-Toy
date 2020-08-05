@@ -33,7 +33,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     } else { // Default
 
-        let rp = RandomPassword::new(10, 2, 3)?.show();
+        let rp = RandomPassword::new(300, 23, 32)?.show();
         let head = format!("{} - {}", now_time(), username());
         let width = max(head.len(), rp.len());
 

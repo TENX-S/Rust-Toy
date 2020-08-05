@@ -91,7 +91,7 @@ impl RandomPassword {
 
         let data = Self::_DATA();
 
-        let mut PWD: Vec<String> =
+        let mut PWD: String =
                 vec![
                     (self.length.clone()-self.sbl_cnt.clone()-self.num_cnt.clone(), data.0),
                     (self.sbl_cnt.clone(), data.1),
@@ -105,18 +105,26 @@ impl RandomPassword {
                             Self::_RAND_IDX(*cnt, data.len())
                                 .iter()
                                 .map(|idx| data[*idx].clone())
-                                .collect::<Vec<String>>()
+                                .collect::<String>()
                         })
-                        .collect()
+                            .collect()
                 })
                     .collect::<Vec<Vec<_>>>()
                     .concat()
-                    .concat();
+                    .join("");
 
         let mut rng = thread_rng();
-        PWD.shuffle(&mut rng);
 
-        self.content = PWD.join("");
+        let bytes;
+
+        unsafe {
+            bytes = PWD.as_bytes_mut();
+        }
+
+        bytes.shuffle(&mut rng);
+        let ret = bytes.par_iter().map(|s| *s as char).collect::<String>();
+
+        self.content = ret;
 
         self.content.clone()
 
@@ -220,6 +228,14 @@ mod tests {
         assert_eq!(RandomPassword::_GEN(vec![(48, 57)]), vec!["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]);
         assert_eq!(RandomPassword::_GEN(vec![(33, 47), (58, 64), (91, 96), (123, 126)]), vec!["!", "\"", "#", "$", "%", "&", "\'", "(", ")", "*", "+", ",", "-", ".", "/", ":", ";", "<", "=", ">", "?", "@", "[", "\\", "]", "^", "_", "`", "{", "|", "}", "~"]);
         assert_eq!(RandomPassword::_GEN(vec![(65, 90), (97, 122)]), vec!["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]);
+
+        let a = RandomPassword::_GEN(vec![(33, 47), (58, 64), (91, 96), (123, 126)]);
+        let mut sum = 0;
+        for sbl in &a {
+            sum += sbl.len();
+        }
+        println!("{}", sum);
+        println!("{}", a.len());
 
     }
 
