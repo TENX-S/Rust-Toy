@@ -1,14 +1,14 @@
 
 use rusic::*;
-use std::io::stdin;
-use std::collections::HashMap;
+use std::{ env, io::stdin, collections::HashMap };
 
 
-// ATTENTION! : - Before you run this example, you should run the example of ncm_test in decrypt_ncm before
 
 fn main() {
 
-    let music_list = get_music_list("decrypt_ncm/ncm_files");
+    let music_dir = env::args().skip(1).collect::<String>();
+
+    let music_list = get_music_list(&music_dir);
     let mut play_list = HashMap::new();
     let mut idx = 1;
     for file in &music_list {
