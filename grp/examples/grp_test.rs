@@ -11,10 +11,12 @@ use std::{
     cmp::max,
     path::Path,
     error::Error,
-    io::prelude::*,
+    io::prelude::*
+};
+use tokio::{
+    io::{ self, AsyncWriteExt },
     fs::{ File, OpenOptions }
 };
-
 
 fn main() -> Result<(), Box<dyn Error>> {
 
@@ -33,7 +35,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     } else { // Default
 
-        let rp = RandomPassword::new(300, 23, 32)?.show();
+        let rp = RandomPassword::new(10, 2, 3)?.show();
         let head = format!("{} - {}", now_time(), username());
         let width = max(head.len(), rp.len());
 
@@ -45,8 +47,8 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 }
 
-
-fn save_to_desktop(rp: &str) -> Result<(), Box<dyn Error>> {
+#[tokio::main]
+async fn save_to_desktop(rp: &str) -> Result<(), Box<dyn Error>> {
 
     let _desktop = dirs::desktop_dir().unwrap();
 
@@ -61,29 +63,31 @@ fn save_to_desktop(rp: &str) -> Result<(), Box<dyn Error>> {
         _ => ()
     }
 
-    let mut file: File;
+    let mut file;
+    if !Path::new(&filepath).exists() {
 
-    if !Path::new(filepath.as_str()).exists() {
-
-        file = File::create(filepath.as_str())?;
+        file = File::create(&filepath).await?;
     }
 
     file = OpenOptions::new()
                        .append(true)
-                       .open(filepath.as_str())?;
+                       .open(&filepath).await?;
+
 
 
     let head = format!("{} - {}", now_time(), username()).to_owned();
     let width = max(head.len(), rp.len());
-    let result = writeln!(&mut file, "\n{}\n{}\n", head, rp).is_ok();
+    let data = format!("\n{}\n{}\n", head, rp);
+    let result = file.write_all(data.as_bytes()).await?;
 
-    if result {
 
-        println!("Password is saved to {}", filepath.as_str());
+    if result == () {
+
+        println!("Password is saved to {}", filepath);
 
     } else {
 
-        println!("Failed to save the password to {}", filepath.as_str());
+        println!("Failed to save the password to {}", filepath);
 
     }
 
