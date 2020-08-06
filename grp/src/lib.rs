@@ -67,8 +67,12 @@ impl RandomPassword {
                     num_cnt: n,
                     content: String::new(),
                 })
-            } else { Err("`length` should be greater than or equal to `sbl_cnt` plus `num_cnt`") }
-        } else { Err("`length`, `sbl_cnt` and `num_cnt` should all be positive") }
+            } else {
+                Err("`length` should be greater than or equal to `sbl_cnt` plus `num_cnt`")
+            }
+        } else {
+            Err("`length`, `sbl_cnt` and `num_cnt` should all be positive")
+        }
     }
 
 
@@ -85,10 +89,11 @@ impl RandomPassword {
     #[inline]
     pub fn show(&mut self) -> String {
 
-        let bytes;
         let data = Self::_DATA();
-        let mut PWD: String = vec![(self.length.clone()-self.sbl_cnt.clone()-self.num_cnt.clone(), data.0), (self.sbl_cnt.clone(), data.1), (self.num_cnt.clone(), data.2)].iter().map(|(bignum, data)| { Self::_DIV_UNIT((*bignum).clone()).par_iter().map(|cnt| { Self::_RAND_IDX(*cnt, data.len()).par_iter().map(|idx| data[*idx].clone()).collect::<String>() }).collect() }).collect::<Vec<Vec<_>>>().concat().join("");
-        unsafe { bytes = PWD.as_bytes_mut(); }
+        let mut PWD: String = Self::_PWD((self.length.clone()-self.sbl_cnt.clone()-self.num_cnt.clone(), data.0),
+                                         (self.sbl_cnt.clone(), data.1),
+                                         (self.num_cnt.clone(), data.2));
+        let bytes = unsafe { PWD.as_bytes_mut() };
         bytes.shuffle(&mut thread_rng());
         self.content = bytes.par_iter().map(|s| *s as char).collect::<String>();
 
@@ -96,6 +101,30 @@ impl RandomPassword {
 
     }
 
+    #[inline]
+    fn _PWD<T>(letters: (T, Vec<String>), symbols: (T, Vec<String>), numbers: (T, Vec<String>)) -> String
+        where T: ToBigUint + Clone + Add<Output=T> + SubAssign + PartialOrd + Display,
+
+    {
+        vec![(letters.0, letters.1),
+            (symbols.0, symbols.1),
+            (numbers.0, numbers.1)]
+            .iter()
+            .map(|(bignum, data)| {
+                Self::_DIV_UNIT((*bignum).clone())
+                    .par_iter()
+                    .map(|cnt| {
+                        Self::_RAND_IDX(*cnt, data.len())
+                            .par_iter()
+                            .map(|idx| data[*idx].clone())
+                            .collect::<String>()
+                    })
+                    .collect()
+            })
+            .collect::<Vec<Vec<_>>>()
+            .concat()
+            .join("")
+    }
 
     /// Decompose large numbers into smaller numbers to use more CPU
     #[inline]
@@ -151,12 +180,32 @@ impl RandomPassword {
 
     /// The character set needed to generate a random password
     #[inline]
-    fn _GEN(range_list: Vec<(u8, u8)>) -> Vec<String> { range_list.into_iter().map(|(start, end)| (start..=end).collect::<Vec<_>>().into_iter().map(|asc_num| (asc_num as char).to_string()).collect::<Vec<_>>()).collect::<Vec<_>>().concat() }
+    fn _GEN(range_list: Vec<(u8, u8)>) -> Vec<String> {
+        range_list
+            .into_iter()
+            .map(|(start, end)|
+                (start..=end)
+                    .collect::<Vec<_>>()
+                    .into_iter()
+                    .map(|asc_num|
+                        (asc_num as char).to_string()
+                    )
+                    .collect::<Vec<_>>()
+            )
+            .collect::<Vec<_>>()
+            .concat()
+    }
 
     /// Range of character set
     /// return (letters, symbols, numbers)
     #[inline]
-    fn _DATA() -> (Vec<String>, Vec<String>, Vec<String>) { (Self::_GEN(vec![(65, 90), (97, 122)]), Self::_GEN(vec![(33, 47), (58, 64), (91, 96), (123, 126)]), Self::_GEN(vec![(48, 57)])) }
+    fn _DATA() -> (Vec<String>, Vec<String>, Vec<String>) {
+        (
+            Self::_GEN(vec![(65, 90), (97, 122)]),
+            Self::_GEN(vec![(33, 47), (58, 64), (91, 96), (123, 126)]),
+            Self::_GEN(vec![(48, 57)])
+        )
+    }
 }
 
 
