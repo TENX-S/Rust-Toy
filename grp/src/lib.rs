@@ -257,8 +257,9 @@ mod tests {
     fn _DIV_UNIT_works() {
 
         assert_eq!(0, RandomPassword::_DIV_UNIT(0).iter().sum::<usize>());
-        assert_eq!(2000, RandomPassword::_DIV_UNIT(2000).iter().sum::<usize>());
-        assert_eq!(usize::MAX, RandomPassword::_DIV_UNIT(usize::MAX).into_par_iter().sum::<usize>());
+        assert_eq!(42, RandomPassword::_DIV_UNIT(42).iter().sum::<usize>());
+        assert_eq!(4200, RandomPassword::_DIV_UNIT(4200).iter().sum::<usize>());
+        assert_eq!(420_000_000, RandomPassword::_DIV_UNIT(420_000_000).into_par_iter().sum::<usize>());
 
     }
 
