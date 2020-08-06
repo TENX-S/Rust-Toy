@@ -106,6 +106,7 @@ impl RandomPassword {
         where T: ToBigUint + Clone + Add<Output=T> + SubAssign + PartialOrd + Display,
 
     {
+
         vec![(letters.0, letters.1),
             (symbols.0, symbols.1),
             (numbers.0, numbers.1)]
@@ -124,6 +125,7 @@ impl RandomPassword {
             .collect::<Vec<Vec<_>>>()
             .concat()
             .join("")
+
     }
 
     /// Decompose large numbers into smaller numbers to use more CPU
@@ -181,6 +183,7 @@ impl RandomPassword {
     /// The character set needed to generate a random password
     #[inline]
     fn _GEN(range_list: Vec<(u8, u8)>) -> Vec<String> {
+
         range_list
             .into_iter()
             .map(|(start, end)|
@@ -194,17 +197,20 @@ impl RandomPassword {
             )
             .collect::<Vec<_>>()
             .concat()
+
     }
 
     /// Range of character set
     /// return (letters, symbols, numbers)
     #[inline]
     fn _DATA() -> (Vec<String>, Vec<String>, Vec<String>) {
+
         (
             Self::_GEN(vec![(65, 90), (97, 122)]),
             Self::_GEN(vec![(33, 47), (58, 64), (91, 96), (123, 126)]),
             Self::_GEN(vec![(48, 57)])
         )
+
     }
 }
 
