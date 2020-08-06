@@ -315,6 +315,7 @@ dependencies = [
  "metaflac",
  "miniserde",
  "num_cpus",
+ "rayon",
  "scoped_threadpool",
 ]
 

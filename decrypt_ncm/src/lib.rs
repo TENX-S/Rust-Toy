@@ -1,17 +1,17 @@
 #[macro_use]
 extern crate miniserde;
 
-use miniserde::json;
 
 use glob::glob;
 use aes::Aes128;
 use base64::decode;
+use miniserde::json;
+use rayon::prelude::*;
 use block_modes::{
     Ecb,
     BlockMode,
     block_padding::Pkcs7,
 };
-use scoped_threadpool::Pool;
 
 use std:: {
     fs::metadata,
@@ -351,72 +351,18 @@ fn convert(file_path: PathBuf) -> Result<PathBuf, Box<dyn error::Error>> {
 
 
 pub fn run() -> Result<(), Box<dyn error::Error>> {
-    let files_path = &env::args().collect::<Vec<String>>()[1];
+    let files_path = &env::args().skip(1).collect::<String>();
 
     let file_list =
-        match metadata(files_path.as_str())?.is_file() {
-            true => [PathBuf::from(files_path.as_str())].to_vec(),
+        match metadata(&files_path)?.is_file() {
+            true => [PathBuf::from(&files_path)].to_vec(),
             false => {
-                let list = [files_path.as_str(), "**", "*.ncm"].iter().collect::<PathBuf>();
-
-                glob(list.to_str()
-                    .unwrap())?
-                    .filter_map(Result::ok)
-                    .collect::<Vec<_>>()
+                let list = [&files_path, "**", "*.ncm"].iter().collect::<PathBuf>();
+                glob(list.to_str().unwrap())?.filter_map(Result::ok).collect::<Vec<_>>()
             }
         };
 
-    let max_workers = num_cpus::get() as u32;
-    let mut pool = Pool::new(max_workers);
+    file_list.into_par_iter().for_each(|ncm| { convert(ncm).unwrap(); });
 
-    // let total = file_list.len();
-    // let mut success = 0;
-    // let mut failed = 0;
-
-    pool.scoped( |scoped| {
-        for file in file_list {
-            scoped.execute( move || {
-                convert(file).unwrap();
-                // match convert(file) {
-                //     Ok(_) => { success += 1; }
-                //     Err(_) => { failed += 1; }
-                // }
-            })
-        }
-    });
-
-    // println!("Total: {}\nSuccess: {}\nFailed: {}", total, success, failed);
-    Ok(())
-}
-
-
-
-/// For example ncm_test
-pub fn decrypt_ncm(_path: &str) -> Result<(), Box<dyn error::Error>>{
-
-    let file_list = match metadata(_path)?.is_file() {
-        true => [PathBuf::from(_path)].to_vec(),
-        false => {
-            let list = [_path, "**", "*.ncm"].iter().collect::<PathBuf>();
-
-            glob(list.to_str()
-                .unwrap())?
-                .filter_map(Result::ok)
-                .collect::<Vec<_>>()
-        }
-    };
-
-    let total = file_list.len();
-    let mut success = 0;
-    let mut failed = 0;
-
-    for file in file_list {
-        match convert(file) {
-            Ok(_) => { success += 1; }
-            Err(_) => { failed += 1; }
-        }
-    }
-
-    println!("Total: {}\nSuccess: {}\nFailed: {}", total, success, failed);
     Ok(())
 }

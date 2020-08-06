@@ -1,10 +1,6 @@
 
-use std::env;
-use decrypt_ncm::decrypt_ncm;
 
+use decrypt_ncm::run;
 
-fn main() {
-    let ncm_path = env::args().skip(1).collect::<String>();
+fn main() { run().unwrap(); }
 
-    decrypt_ncm(&ncm_path).unwrap();
-}
