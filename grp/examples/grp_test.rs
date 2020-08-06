@@ -14,8 +14,8 @@ use std::{
     io::prelude::*
 };
 use tokio::{
+    fs::{ File, OpenOptions },
     io::{ self, AsyncWriteExt },
-    fs::{ File, OpenOptions }
 };
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -47,6 +47,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
 }
 
+
 #[tokio::main]
 async fn save_to_desktop(rp: &str) -> Result<(), Box<dyn Error>> {
 
@@ -58,7 +59,7 @@ async fn save_to_desktop(rp: &str) -> Result<(), Box<dyn Error>> {
 
         "Darwin" | "Linux" => { filepath = format!("{}/random_password.txt", _desktop.to_str().unwrap()); },
 
-        "Windows" => { filepath = format!("{}\\random_password.txt", _desktop.to_str().unwrap()); },
+        "Windows" => { filepath = format!(r"{}\random_password.txt", _desktop.to_str().unwrap()); },
 
         _ => ()
     }

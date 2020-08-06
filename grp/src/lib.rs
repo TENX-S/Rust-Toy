@@ -91,27 +91,7 @@ impl RandomPassword {
 
         let data = Self::_DATA();
 
-        let mut PWD: String =
-                vec![
-                    (self.length.clone()-self.sbl_cnt.clone()-self.num_cnt.clone(), data.0),
-                    (self.sbl_cnt.clone(), data.1),
-                    (self.num_cnt.clone(), data.2)
-                ]
-                .iter()
-                .map(|(bignum, data)| {
-                    Self::_DIV_UNIT((*bignum).clone())
-                        .par_iter()
-                        .map(|cnt| {
-                            Self::_RAND_IDX(*cnt, data.len())
-                                .par_iter()
-                                .map(|idx| data[*idx].clone())
-                                .collect::<String>()
-                        })
-                            .collect()
-                })
-                    .collect::<Vec<Vec<_>>>()
-                    .concat()
-                    .join("");
+        let mut PWD: String = vec![(self.length.clone()-self.sbl_cnt.clone()-self.num_cnt.clone(), data.0), (self.sbl_cnt.clone(), data.1), (self.num_cnt.clone(), data.2)].iter().map(|(bignum, data)| { Self::_DIV_UNIT((*bignum).clone()).par_iter().map(|cnt| { Self::_RAND_IDX(*cnt, data.len()).par_iter().map(|idx| data[*idx].clone()).collect::<String>() }).collect() }).collect::<Vec<Vec<_>>>().concat().join("");
 
         let mut rng = thread_rng();
 
@@ -121,9 +101,8 @@ impl RandomPassword {
         }
 
         bytes.shuffle(&mut rng);
-        let ret = bytes.par_iter().map(|s| *s as char).collect::<String>();
 
-        self.content = ret;
+        self.content = bytes.par_iter().map(|s| *s as char).collect::<String>();
 
         self.content.clone()
 
@@ -175,16 +154,15 @@ impl RandomPassword {
         let mut n = n.to_biguint().unwrap();
         let mut rng = thread_rng();
         let mut idx;
-        let mut idxs = Vec::new();
-
+        let mut idx_s = Vec::new();
 
         while n != BigUint::zero() {
             idx = rng.gen_range(0, cnt);
-            idxs.push(idx);
+            idx_s.push(idx);
             n -= BigUint::one();
         }
 
-        idxs
+        idx_s
 
     }
 
@@ -278,13 +256,9 @@ mod tests {
     #[test]
     fn _DIV_UNIT_works() {
 
-        let mut bignum = 2000.to_biguint().unwrap().to_usize().unwrap();
-
-        println!("{} divide into {:?}", bignum, RandomPassword::_DIV_UNIT(bignum));
-
-        let smallnum = 0;
-
-        println!("{} divide into {:?}", smallnum, RandomPassword::_DIV_UNIT(smallnum));
+        assert_eq!(0, RandomPassword::_DIV_UNIT(0).iter().sum::<usize>());
+        assert_eq!(2000, RandomPassword::_DIV_UNIT(2000).iter().sum::<usize>());
+        assert_eq!(usize::MAX, RandomPassword::_DIV_UNIT(usize::MAX).into_par_iter().sum::<usize>());
 
     }
 
