@@ -1,12 +1,10 @@
 #![allow(non_snake_case)]
 
-
 use rand::prelude::*;
 use rayon::prelude::*;
+use num_bigint::{ BigUint, ToBigUint };
 use num_traits::{ Zero, One, ToPrimitive };
 use std::{ fmt::Display, ops::{ Add, SubAssign } };
-
-pub use num_bigint::{ BigUint, ToBigUint };
 
 
 /// struct `RandomPassword`
