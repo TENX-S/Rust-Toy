@@ -21,4 +21,3 @@ whoami = "0.9.0"
 sys-info = "0.7.0"
 num-bigint = "0.3.0"
 num-traits = "0.2.12"
-tokio = { version = "0.2", features = ["full"] }

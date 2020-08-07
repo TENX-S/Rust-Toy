@@ -11,14 +11,11 @@ use std::{
     cmp::max,
     path::Path,
     error::Error,
-    io::prelude::*
-};
-use tokio::{
-    fs::{ File, OpenOptions },
-    io::{ self, AsyncWriteExt },
+    io::prelude::*,
+    fs::{ File, OpenOptions }
 };
 
-fn main() -> Result<(), Box<dyn Error>> {
+fn main() {
 
     let requirement = env::args()
                           .skip(1)
@@ -30,26 +27,23 @@ fn main() -> Result<(), Box<dyn Error>> {
         let (length,                 sbl_cnt,                num_cnt               )
             =
             (requirement[0].clone(), requirement[1].clone(), requirement[2].clone());
+        let mut r_p = RandomPassword::new(length, sbl_cnt, num_cnt);
 
-        save_to_desktop(&RandomPassword::new(length, sbl_cnt, num_cnt)?.show());
+        r_p.set_unit(1);
+        save_to_desktop(&r_p.show());
 
     } else { // Default
-
-        let rp = RandomPassword::new(10, 2, 3)?.show();
+        let rp = RandomPassword::new(10, 2, 3).show();
         let head = format!("{} - {}", now_time(), username());
         let width = max(head.len(), rp.len());
-
         println!("\n{}\n{}\n", head, rp);
-
     }
-
-    Ok(())
 
 }
 
 
-#[tokio::main]
-async fn save_to_desktop(rp: &str) -> Result<(), Box<dyn Error>> {
+
+fn save_to_desktop(rp: &str) -> Result<(), Box<dyn Error>> {
 
     let _desktop = dirs::desktop_dir().unwrap();
 
@@ -67,19 +61,16 @@ async fn save_to_desktop(rp: &str) -> Result<(), Box<dyn Error>> {
     let mut file;
     if !Path::new(&filepath).exists() {
 
-        file = File::create(&filepath).await?;
+        file = File::create(&filepath)?;
     }
 
     file = OpenOptions::new()
                        .append(true)
-                       .open(&filepath).await?;
-
-
+                       .open(&filepath)?;
 
     let head = format!("{} - {}", now_time(), username()).to_owned();
     let width = max(head.len(), rp.len());
-    let data = format!("\n{}\n{}\n", head, rp);
-    let result = file.write_all(data.as_bytes()).await?;
+    let result = writeln!(&mut file, "\n{}\n{}\n", head, rp)?;
 
 
     if result == () {

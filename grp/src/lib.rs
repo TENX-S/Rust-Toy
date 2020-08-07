@@ -8,13 +8,15 @@ use std::{ fmt::Display, ops::{ Add, SubAssign } };
 
 pub use num_bigint::{ BigUint, ToBigUint };
 
+
 /// struct `RandomPassword`
 #[derive(Clone, Debug)]
 pub struct RandomPassword {
-    length: BigUint,
+    ltr_cnt: BigUint,
     sbl_cnt: BigUint,
     num_cnt: BigUint,
     content: String,
+    _UNIT: usize,
 }
 
 
@@ -24,55 +26,33 @@ impl RandomPassword {
     /// # Example
     /// ```
     /// use grp::{RandomPassword, BigUint};
-    /// let rp_1 = RandomPassword::new(11, 4, 2)?; // ok
+    /// let rp_1 = RandomPassword::new(11, 4, 2); // ok
     ///
-    /// let rp_1_1 = RandomPassword::new(11.to_biguint().unwrap(), 4.to_biguint().unwrap(), 2.to_biguint().unwrap());
+    /// let rp_2 = RandomPassword::new(11.to_biguint().unwrap(), 4.to_biguint().unwrap(), 2.to_biguint().unwrap());
     /// // It works too, but not recommended
     ///
     /// // If you want push a large number in it
     /// // parse the `&str` into `Biguint`
-    /// let length = format!("{}000", usize::MAX).parse::<BigUint>()?;
+    /// let ltr_cnt = format!("{}000", usize::MAX).parse::<BigUint>().unwrap();
     /// // or
     /// // use std::str::FromStr;
-    /// // let length = BigUint::from_str(format!("{}000", usize::MAX))?;
-    /// let sbl_cnt = format!("{}00", usize::MAX).parse::<BigUint>()?;
-    /// let num_cnt = format!("{}0", usize::MAX).parse::<BigUint>()?;
-    /// let rp_1_2 = RandomPassword::new(length, sbl_cnt, num_cnt)?;
-    ///
-    /// let rp_2 = RandomPassword::new(-1, 0, 0)?;
-    /// assert_eq!(rp_2, Err("`length`, `sbl_cnt` and `num_cnt` should all be positive"));
-    ///
-    /// let rp_3 = RandomPassword::new(3, 3, 3)?;
-    /// assert_eq!(rp_3, Err("`length` should be greater than or equal to `sbl_cnt` plus `num_cnt`"));
+    /// // let length = BigUint::from_str(format!("{}000", usize::MAX));
+    /// let sbl_cnt = format!("{}00", usize::MAX).parse::<BigUint>().unwrap();
+    /// let num_cnt = format!("{}0", usize::MAX).parse::<BigUint>().unwrap();
+    /// let rp_3 = RandomPassword::new(ltr_cnt, sbl_cnt, num_cnt);
     /// ```
     ///
     #[inline]
-    pub fn new<T>(length: T, sbl_cnt: T, num_cnt: T) -> Result<Self, &'static str>
-        where T: ToBigUint + Add<Output=T> + PartialOrd + Clone
-    {
+    pub fn new<T: ToBigUint>(ltr_cnt: T, sbl_cnt: T, num_cnt: T) -> Self {
 
-        let l = length.to_biguint();
-        let s = sbl_cnt.to_biguint();
-        let n = num_cnt.to_biguint();
-
-        if !l.is_none() && !s.is_none() && !n.is_none() {
-            let l = l.unwrap();
-            let s = s.unwrap();
-            let n = n.unwrap();
-
-            if l.clone() >= s.clone() + n.clone() {
-                Ok(RandomPassword {
-                    length: l,
-                    sbl_cnt: s,
-                    num_cnt: n,
-                    content: String::new(),
-                })
-            } else {
-                Err("`length` should be greater than or equal to `sbl_cnt` plus `num_cnt`")
-            }
-        } else {
-            Err("`length`, `sbl_cnt` and `num_cnt` should all be positive")
+        RandomPassword {
+            ltr_cnt: ltr_cnt.to_biguint().unwrap(),
+            sbl_cnt: sbl_cnt.to_biguint().unwrap(),
+            num_cnt: num_cnt.to_biguint().unwrap(),
+            content: String::new(),
+            _UNIT: i8::MAX as usize
         }
+
     }
 
 
@@ -81,7 +61,7 @@ impl RandomPassword {
     /// # Example
     ///
     /// ```
-    /// let mut rp = RandomPassword::new(10, 2, 3)?;
+    /// let mut rp = RandomPassword::new(10, 2, 3);
     /// println!("{}", rp.show());
     /// // Output: +*yz952SwG
     /// ```
@@ -90,9 +70,9 @@ impl RandomPassword {
     pub fn show(&mut self) -> String {
 
         let data = Self::_DATA();
-        let mut PWD: String = Self::_PWD((self.length.clone()-self.sbl_cnt.clone()-self.num_cnt.clone(), data.0),
-                                         (self.sbl_cnt.clone(), data.1),
-                                         (self.num_cnt.clone(), data.2));
+        let mut PWD: String = self._PWD((self.ltr_cnt.clone(), data.0),
+                                        (self.sbl_cnt.clone(), data.1),
+                                        (self.num_cnt.clone(), data.2),);
         let bytes = unsafe { PWD.as_bytes_mut() };
         bytes.shuffle(&mut thread_rng());
         self.content = bytes.par_iter().map(|s| *s as char).collect::<String>();
@@ -101,10 +81,17 @@ impl RandomPassword {
 
     }
 
+    /// Return the length of `RandomPassword` instance
     #[inline]
-    fn _PWD<T>(letters: (T, Vec<String>), symbols: (T, Vec<String>), numbers: (T, Vec<String>)) -> String
-        where T: ToBigUint + Clone + Add<Output=T> + SubAssign + PartialOrd + Display,
+    pub fn len(&self) -> usize { self.content.len() }
 
+    /// **ATTENTION**: if you don't know what this is, do not use it.
+    #[inline]
+    pub fn set_unit(&mut self, val: usize) { self._UNIT = val; }
+
+    #[inline]
+    fn _PWD<T>(&self, letters: (T, Vec<String>), symbols: (T, Vec<String>), numbers: (T, Vec<String>)) -> String
+        where T: ToBigUint + Clone + Add<Output=T> + SubAssign + PartialOrd + Display,
     {
 
         vec![(letters.0, letters.1),
@@ -112,7 +99,7 @@ impl RandomPassword {
             (numbers.0, numbers.1)]
             .iter()
             .map(|(bignum, data)| {
-                Self::_DIV_UNIT((*bignum).clone())
+                self._DIV_UNIT((*bignum).clone())
                     .par_iter()
                     .map(|cnt| {
                         Self::_RAND_IDX(*cnt, data.len())
@@ -130,22 +117,23 @@ impl RandomPassword {
 
     /// Decompose large numbers into smaller numbers to use more CPU
     #[inline]
-    fn _DIV_UNIT<T>(n: T) -> Vec<usize>
+    fn _DIV_UNIT<T>(&self, n: T) -> Vec<usize>
         where T: ToBigUint + Add<Output=T> + SubAssign + PartialOrd + Clone + Display
     {
 
         let mut n = n.to_biguint().unwrap();
         // The value of UNIT is inversely proportional to memory overhead
         // In order to increase CPU time and reduce the memory overhead, raise the value of `UNIT`
-        let UNIT = i8::MAX.to_biguint().unwrap();
         let mut ret = Vec::new();
+        let UNIT = self._UNIT.to_biguint().unwrap();
+
         loop {
             if n < UNIT.clone() {
                 ret.push(n.to_usize().unwrap());
                 break;
             } else {
                 n -= UNIT.clone();
-                ret.push(i8::MAX as usize);
+                ret.push(self._UNIT);
             }
         }
 
@@ -212,6 +200,7 @@ impl RandomPassword {
         )
 
     }
+
 }
 
 
@@ -231,33 +220,12 @@ mod tests {
 
 
     #[test]
-    fn _RAND_IDX_works() { assert!(RandomPassword::_RAND_IDX(10_000.to_biguint().unwrap(), 100_0000).into_iter().filter(|x| *x > 100_0000).collect::<Vec<_>>().is_empty()); }
-
-    #[test]
-    fn constructor_works() {
-
-        let rp0 = RandomPassword::new(0, 0, 0);
-        assert!(rp0.is_ok());
-
-        let rp1 = RandomPassword::new(12, 1, 1);
-        assert!(rp1.is_ok());
-
-        let rp2 = RandomPassword::new(-1, 1, 1);
-        assert!(rp2.is_err());
-
-        let rp3 = RandomPassword::new(2, 2, 2);
-        assert!(rp3.is_err());
-
-    }
-
-    #[test]
-    fn _DIV_UNIT_works() {
-
-        assert_eq!(0, RandomPassword::_DIV_UNIT(0).iter().sum::<usize>());
-        assert_eq!(42, RandomPassword::_DIV_UNIT(42).iter().sum::<usize>());
-        assert_eq!(4200, RandomPassword::_DIV_UNIT(4200).iter().sum::<usize>());
-        assert_eq!(420_000_000, RandomPassword::_DIV_UNIT(420_000_000).into_par_iter().sum::<usize>());
-
+    fn _RAND_IDX_works() {
+        assert!(RandomPassword::_RAND_IDX(10_000.to_biguint().unwrap(), 100_0000)
+                               .into_iter()
+                               .filter(|x| *x > 100_0000)
+                               .collect::<Vec<_>>()
+                               .is_empty());
     }
 
 }
