@@ -50,7 +50,7 @@ impl RandomPassword {
             sbl_cnt: sbl_cnt.to_biguint().unwrap(),
             num_cnt: num_cnt.to_biguint().unwrap(),
             content: String::new(),
-            _UNIT: i8::MAX as usize
+            _UNIT: 1
         }
 
     }
@@ -217,7 +217,6 @@ mod tests {
         assert_eq!(RandomPassword::_GEN(vec![(65, 90), (97, 122)]), vec!["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]);
 
     }
-
 
     #[test]
     fn _RAND_IDX_works() {

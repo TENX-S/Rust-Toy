@@ -29,7 +29,6 @@ fn main() {
             (requirement[0].clone(), requirement[1].clone(), requirement[2].clone());
         let mut r_p = RandomPassword::new(length, sbl_cnt, num_cnt);
 
-        r_p.set_unit(1);
         save_to_desktop(&r_p.show());
 
     } else { // Default
