@@ -25,23 +25,16 @@ impl RandomPassword {
     /// Return an instance of `Result<RandomPassword, &'static str>`
     /// # Example
     /// ```
-    /// use grp::{RandomPassword, BigUint};
-    /// let rp_1 = RandomPassword::new(11, 4, 2); // ok
-    ///
-    /// let rp_2 = RandomPassword::new(11.to_biguint().unwrap(), 4.to_biguint().unwrap(), 2.to_biguint().unwrap());
-    /// // It works too, but not recommended
-    ///
+    /// use grp::{ RandomPassword, BigUint };
+    /// let r_p = RandomPassword::new(11, 4, 2);
     /// // If you want push a large number in it
     /// // parse the `&str` into `Biguint`
-    /// let ltr_cnt = format!("{}000", usize::MAX).parse::<BigUint>().unwrap();
-    /// // or
-    /// // use std::str::FromStr;
-    /// // let length = BigUint::from_str(format!("{}000", usize::MAX));
-    /// let sbl_cnt = format!("{}00", usize::MAX).parse::<BigUint>().unwrap();
-    /// let num_cnt = format!("{}0", usize::MAX).parse::<BigUint>().unwrap();
-    /// let rp_3 = RandomPassword::new(ltr_cnt, sbl_cnt, num_cnt);
+    /// use std::str::FromStr;
+    /// let ltr_cnt = BigUint::from_str(format!("{}000", usize::MAX));
+    /// let sbl_cnt = BigUint::from_str(format!("{}000", usize::MAX));
+    /// let num_cnt = BigUint::from_str(format!("{}000", usize::MAX));
+    /// r_p = RandomPassword::new(ltr_cnt, sbl_cnt, num_cnt);
     /// ```
-    ///
     #[inline]
     pub fn new<T: ToBigUint>(ltr_cnt: T, sbl_cnt: T, num_cnt: T) -> Self {
 
@@ -57,7 +50,6 @@ impl RandomPassword {
 
 
     /// Return the string of random password
-    ///
     /// # Example
     ///
     /// ```
@@ -65,7 +57,6 @@ impl RandomPassword {
     /// println!("{}", rp.show());
     /// // Output: +*yz952SwG
     /// ```
-    ///
     #[inline]
     pub fn show(&mut self) -> String {
 
@@ -86,9 +77,12 @@ impl RandomPassword {
     pub fn len(&self) -> usize { self.content.len() }
 
     /// **ATTENTION**: if you don't know what this is, do not use it.
+    /// The value of UNIT is inversely proportional to memory overhead
+    /// In order to increase CPU time and reduce the memory overhead, raise the value of `UNIT`
     #[inline]
     pub fn set_unit(&mut self, val: usize) { self._UNIT = val; }
 
+    /// Generate random password
     #[inline]
     fn _PWD<T>(&self, letters: (T, Vec<String>), symbols: (T, Vec<String>), numbers: (T, Vec<String>)) -> String
         where T: ToBigUint + Clone + Add<Output=T> + SubAssign + PartialOrd + Display,
@@ -115,15 +109,14 @@ impl RandomPassword {
 
     }
 
-    /// Decompose large numbers into smaller numbers to use more CPU
+    /// Decompose large numbers into smaller numbers
     #[inline]
     fn _DIV_UNIT<T>(&self, n: T) -> Vec<usize>
         where T: ToBigUint + Add<Output=T> + SubAssign + PartialOrd + Clone + Display
     {
 
         let mut n = n.to_biguint().unwrap();
-        // The value of UNIT is inversely proportional to memory overhead
-        // In order to increase CPU time and reduce the memory overhead, raise the value of `UNIT`
+
         let mut ret = Vec::new();
         let UNIT = self._UNIT.to_biguint().unwrap();
 
@@ -144,13 +137,11 @@ impl RandomPassword {
 
     /// Generate n random numbers up to cnt
     /// # Example
-    ///
     /// ```
     /// let random_indexs = _RAND_IDX(5, 10);
     /// println!("{:?}", random_indexs);
     /// // Output: [9, 0, 5, 8, 6]
     /// ```
-    ///
     #[inline]
     fn _RAND_IDX(n: impl ToBigUint, cnt: usize) -> Vec<usize> {
 
