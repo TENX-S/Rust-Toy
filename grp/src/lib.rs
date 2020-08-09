@@ -146,7 +146,7 @@ impl RandomPassword {
         let mut n = n.to_biguint().unwrap();
         let mut idx_s = Vec::with_capacity(n.to_usize().unwrap());
 
-        while n != BigUint::zero() {
+        while !n.is_zero() {
             idx = thread_rng().gen_range(0, cnt);
             idx_s.push(idx);
             n -= BigUint::one();
