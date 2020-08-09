@@ -23,14 +23,15 @@ impl RandomPassword {
     /// Return an empty instance of `Result<RandomPassword, &'static str>`
     /// # Example
     /// ```
-    /// use grp::{ RandomPassword, BigUint };
-    /// let r_p = RandomPassword::new(11, 4, 2);
+    /// use grp::RandomPassword;
+    /// use num_bigint::BigUint;
+    /// let mut r_p = RandomPassword::new(11, 4, 2);
     /// // If you want push a large number in it
     /// // parse the `&str` into `Biguint`
     /// use std::str::FromStr;
-    /// let ltr_cnt = BigUint::from_str(format!("{}000", usize::MAX));
-    /// let sbl_cnt = BigUint::from_str(format!("{}000", usize::MAX));
-    /// let num_cnt = BigUint::from_str(format!("{}000", usize::MAX));
+    /// let ltr_cnt = BigUint::from_str(&format!("{}000", usize::MAX)).unwrap();
+    /// let sbl_cnt = BigUint::from_str(&format!("{}000", usize::MAX)).unwrap();
+    /// let num_cnt = BigUint::from_str(&format!("{}000", usize::MAX)).unwrap();
     /// r_p = RandomPassword::new(ltr_cnt, sbl_cnt, num_cnt);
     /// ```
     #[inline]
@@ -51,9 +52,10 @@ impl RandomPassword {
     /// # Example
     ///
     /// ```
+    /// use grp::RandomPassword;
     /// let mut rp = RandomPassword::new(10, 2, 3);
     /// println!("{}", rp.show());
-    /// // Output: +*yz952SwG
+    /// // Output: 0fajn-ulS8S}7sn
     /// ```
     #[inline]
     pub fn show(&mut self) -> String {
@@ -85,7 +87,7 @@ impl RandomPassword {
 
     /// Generate random password
     #[inline]
-    fn _PWD<T>(&self, letters: (T, Vec<String>), symbols: (T, Vec<String>), numbers: (T, Vec<String>)) -> String
+    pub(crate) fn _PWD<T>(&self, letters: (T, Vec<String>), symbols: (T, Vec<String>), numbers: (T, Vec<String>)) -> String
         where T: ToBigUint + Clone + SubAssign + PartialOrd
     {
 
@@ -112,7 +114,7 @@ impl RandomPassword {
 
     /// Decompose large numbers into smaller numbers
     #[inline]
-    fn _DIV_UNIT<T>(&self, n: T) -> Vec<usize>
+    pub(crate) fn _DIV_UNIT<T>(&self, n: T) -> Vec<usize>
         where T: ToBigUint + SubAssign + PartialOrd + Clone
     {
 
@@ -136,15 +138,9 @@ impl RandomPassword {
     }
 
 
-    /// Generate n random numbers up to cnt
-    /// # Example
-    /// ```
-    /// let random_indexs = _RAND_IDX(5, 10);
-    /// println!("{:?}", random_indexs);
-    /// // Output: [9, 0, 5, 8, 6]
-    /// ```
+    /// Generate n random numbers, each one is up to cnt
     #[inline]
-    fn _RAND_IDX(n: impl ToBigUint, cnt: usize) -> Vec<usize> {
+    pub(crate) fn _RAND_IDX(n: impl ToBigUint, cnt: usize) -> Vec<usize> {
 
         let mut idx;
         let mut n = n.to_biguint().unwrap();
@@ -162,7 +158,7 @@ impl RandomPassword {
 
     /// The character set needed to generate a random password
     #[inline]
-    fn _GEN(range_list: Vec<(u8, u8)>) -> Vec<String> {
+    pub(crate) fn _GEN(range_list: Vec<(u8, u8)>) -> Vec<String> {
 
         range_list
             .into_iter()
@@ -183,7 +179,7 @@ impl RandomPassword {
     /// Range of character set
     /// return (letters, symbols, numbers)
     #[inline]
-    fn _DATA() -> (Vec<String>, Vec<String>, Vec<String>) {
+    pub(crate) fn _DATA() -> (Vec<String>, Vec<String>, Vec<String>) {
 
         (
             Self::_GEN(vec![(65, 90), (97, 122)]),
