@@ -2,9 +2,9 @@
 
 use rand::prelude::*;
 use rayon::prelude::*;
+use std::ops::SubAssign;
 use num_bigint::{ BigUint, ToBigUint };
 use num_traits::{ Zero, One, ToPrimitive };
-use std::{ fmt::Display, ops::{ Add, SubAssign } };
 
 
 /// struct `RandomPassword`
@@ -20,7 +20,7 @@ pub struct RandomPassword {
 
 impl RandomPassword {
 
-    /// Return an instance of `Result<RandomPassword, &'static str>`
+    /// Return an empty instance of `Result<RandomPassword, &'static str>`
     /// # Example
     /// ```
     /// use grp::{ RandomPassword, BigUint };
@@ -70,11 +70,14 @@ impl RandomPassword {
 
     }
 
-    /// Return the length of `RandomPassword` instance
+    /// Returns the length of this `RandomPassword`, in both bytes and [char]s.
     #[inline]
     pub fn len(&self) -> usize { self.content.len() }
 
-    /// **ATTENTION**: if you don't know what this is, do not use it.
+    /// Returns true if this `RandomPassword` has a length of zero, and false otherwise.
+    #[inline]
+    pub fn is_empty(&self) -> bool { self.content.is_empty() }
+
     /// The value of UNIT is inversely proportional to memory overhead
     /// In order to increase CPU time and reduce the memory overhead, raise the value of `UNIT`
     #[inline]
@@ -83,12 +86,12 @@ impl RandomPassword {
     /// Generate random password
     #[inline]
     fn _PWD<T>(&self, letters: (T, Vec<String>), symbols: (T, Vec<String>), numbers: (T, Vec<String>)) -> String
-        where T: ToBigUint + Clone + Add<Output=T> + SubAssign + PartialOrd + Display,
+        where T: ToBigUint + Clone + SubAssign + PartialOrd
     {
 
         vec![(letters.0, letters.1),
-            (symbols.0, symbols.1),
-            (numbers.0, numbers.1)]
+             (symbols.0, symbols.1),
+             (numbers.0, numbers.1),]
             .iter()
             .map(|(bignum, data)| {
                 self._DIV_UNIT((*bignum).clone())
@@ -110,13 +113,13 @@ impl RandomPassword {
     /// Decompose large numbers into smaller numbers
     #[inline]
     fn _DIV_UNIT<T>(&self, n: T) -> Vec<usize>
-        where T: ToBigUint + Add<Output=T> + SubAssign + PartialOrd + Clone + Display
+        where T: ToBigUint + SubAssign + PartialOrd + Clone
     {
 
         let mut n = n.to_biguint().unwrap();
 
-        let mut ret = Vec::new();
         let UNIT = self._UNIT.to_biguint().unwrap();
+        let mut ret = Vec::with_capacity((n.clone() / UNIT.clone() + BigUint::one()).to_usize().unwrap());
 
         loop {
             if n < UNIT.clone() {
@@ -144,8 +147,8 @@ impl RandomPassword {
     fn _RAND_IDX(n: impl ToBigUint, cnt: usize) -> Vec<usize> {
 
         let mut idx;
-        let mut idx_s = Vec::new();
         let mut n = n.to_biguint().unwrap();
+        let mut idx_s = Vec::with_capacity(n.to_usize().unwrap());
 
         while n != BigUint::zero() {
             idx = thread_rng().gen_range(0, cnt);
