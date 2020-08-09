@@ -26,12 +26,15 @@ impl RandomPassword {
     /// use grp::RandomPassword;
     /// use num_bigint::BigUint;
     /// let mut r_p = RandomPassword::new(11, 4, 2);
+    ///
     /// // If you want push a large number in it
-    /// // parse the `&str` into `Biguint`
+    /// // parse the `&str` into `BigUint`
     /// use std::str::FromStr;
+    ///
     /// let ltr_cnt = BigUint::from_str(&format!("{}000", usize::MAX)).unwrap();
     /// let sbl_cnt = BigUint::from_str(&format!("{}000", usize::MAX)).unwrap();
     /// let num_cnt = BigUint::from_str(&format!("{}000", usize::MAX)).unwrap();
+    ///
     /// r_p = RandomPassword::new(ltr_cnt, sbl_cnt, num_cnt);
     /// ```
     #[inline]
@@ -142,17 +145,15 @@ impl RandomPassword {
     #[inline]
     pub(crate) fn _RAND_IDX(n: impl ToBigUint, cnt: usize) -> Vec<usize> {
 
-        let mut idx;
         let mut n = n.to_biguint().unwrap();
-        let mut idx_s = Vec::with_capacity(n.to_usize().unwrap());
+        let mut idxs = Vec::with_capacity(n.to_usize().unwrap());
 
         while !n.is_zero() {
-            idx = thread_rng().gen_range(0, cnt);
-            idx_s.push(idx);
+            idxs.push(thread_rng().gen_range(0, cnt));
             n -= BigUint::one();
         }
 
-        idx_s
+        idxs
 
     }
 
