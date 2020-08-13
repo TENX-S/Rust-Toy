@@ -77,7 +77,7 @@ impl RandPwd {
     /// ```
     /// use grp::RandPwd;
     /// let mut rp = RandPwd::new(10, 2, 3);
-    /// rp.mix();
+    /// rp.join();
     /// println!("{}", rp.show());
     /// // Output: 0fajn-ulS8S}7sn
     /// ```
@@ -111,7 +111,7 @@ impl RandPwd {
     /// Change the count of letters, symbols or numbers of `RandPwd`
     /// ```
     /// use grp::*;
-    /// let r_p = RandPwd::new(10, 2, 3);
+    /// let mut r_p = RandPwd::new(10, 2, 3);
     ///
     /// // Set the letter's count
     /// r_p.set_cnt("ltr", 0);
@@ -262,9 +262,9 @@ mod tests {
     #[test]
     fn _GEN_works() {
 
-        assert_eq!(RandPwd::_GEN(&vec![(48, 57)]), vec!["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]);
-        assert_eq!(RandPwd::_GEN(&vec![(33, 47), (58, 64), (91, 96), (123, 126)]), vec!["!", "\"", "#", "$", "%", "&", "\'", "(", ")", "*", "+", ",", "-", ".", "/", ":", ";", "<", "=", ">", "?", "@", "[", "\\", "]", "^", "_", "`", "{", "|", "}", "~"]);
-        assert_eq!(RandPwd::_GEN(&vec![(65, 90), (97, 122)]), vec!["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]);
+        assert_eq!(RandPwd::_DATA()[2], vec!["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]);
+        assert_eq!(RandPwd::_DATA()[1], vec!["!", "\"", "#", "$", "%", "&", "\'", "(", ")", "*", "+", ",", "-", ".", "/", ":", ";", "<", "=", ">", "?", "@", "[", "\\", "]", "^", "_", "`", "{", "|", "}", "~"]);
+        assert_eq!(RandPwd::_DATA()[0], vec!["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]);
 
     }
 
