@@ -1,10 +1,12 @@
 #![allow(non_snake_case)]
+#![feature(trait_alias)]
 
 use rand::prelude::*;
 use rayon::prelude::*;
 use std::ops::SubAssign;
 use num_bigint::{ BigUint, ToBigUint };
 use num_traits::{ Zero, One, ToPrimitive };
+
 
 
 /// struct `RandomPassword`
@@ -17,6 +19,11 @@ pub struct RandomPassword {
     _UNIT: usize,
 }
 
+
+type I<'a, T> = (&'a T, &'a [String]);
+
+pub trait TBU = ToBigUint;
+trait P = TBU + Clone + SubAssign + PartialOrd;
 
 impl RandomPassword {
 
@@ -38,7 +45,7 @@ impl RandomPassword {
     /// r_p = RandomPassword::new(ltr_cnt, sbl_cnt, num_cnt);
     /// ```
     #[inline]
-    pub fn new<T: ToBigUint>(ltr_cnt: T, sbl_cnt: T, num_cnt: T) -> Self {
+    pub fn new<T: TBU>(ltr_cnt: T, sbl_cnt: T, num_cnt: T) -> Self {
 
         RandomPassword {
             ltr_cnt: ltr_cnt.to_biguint().unwrap(),
@@ -51,29 +58,30 @@ impl RandomPassword {
     }
 
 
+    /// Generate the password
+    #[inline]
+    pub fn mix(&mut self) {
+        let data = Self::_DATA();
+        let mut PWD: String = self._PWD((&self.ltr_cnt, &data.0),
+                                        (&self.sbl_cnt, &data.1),
+                                        (&self.num_cnt, &data.2),);
+        let bytes = unsafe { PWD.as_bytes_mut() };
+        bytes.shuffle(&mut thread_rng());
+        self.content = bytes.par_iter().map(|s| *s as char).collect::<String>();
+    }
+
     /// Return the string of random password
     /// # Example
     ///
     /// ```
     /// use grp::RandomPassword;
     /// let mut rp = RandomPassword::new(10, 2, 3);
+    /// rp.mix();
     /// println!("{}", rp.show());
     /// // Output: 0fajn-ulS8S}7sn
     /// ```
     #[inline]
-    pub fn show(&mut self) -> String {
-
-        let data = Self::_DATA();
-        let mut PWD: String = self._PWD((self.ltr_cnt.clone(), data.0),
-                                        (self.sbl_cnt.clone(), data.1),
-                                        (self.num_cnt.clone(), data.2),);
-        let bytes = unsafe { PWD.as_bytes_mut() };
-        bytes.shuffle(&mut thread_rng());
-        self.content = bytes.par_iter().map(|s| *s as char).collect::<String>();
-
-        self.content.clone()
-
-    }
+    pub fn show(&mut self) -> &str { &self.content }
 
     /// Returns the length of this `RandomPassword`, in both bytes and [char]s.
     #[inline]
@@ -88,10 +96,27 @@ impl RandomPassword {
     #[inline]
     pub fn set_unit(&mut self, val: usize) { self._UNIT = val; }
 
+    /// Change the letter's count of `RandomPassword`
+    #[inline]
+    pub fn set_ltr_cnt<T: TBU>(&mut self, val: T) {
+        self.ltr_cnt = val.to_biguint().unwrap();
+    }
+
+    /// Change the symbol's count of `RandomPassword`
+    #[inline]
+    pub fn set_sbl_cnt<T: TBU>(&mut self, val: T) {
+        self.sbl_cnt = val.to_biguint().unwrap();
+    }
+
+    /// Change the number's count of `RandomPassword`
+    #[inline]
+    pub fn set_num_cnt<T: TBU>(&mut self, val: T) {
+        self.num_cnt = val.to_biguint().unwrap();
+    }
+
     /// Generate random password
     #[inline]
-    pub(crate) fn _PWD<T>(&self, letters: (T, Vec<String>), symbols: (T, Vec<String>), numbers: (T, Vec<String>)) -> String
-        where T: ToBigUint + Clone + SubAssign + PartialOrd
+    pub(crate) fn _PWD<'a, T: P>(&self, letters: I<'a, T>, symbols: I<'a, T>, numbers: I<'a, T>) -> String
     {
 
         vec![(letters.0, letters.1),
@@ -99,7 +124,7 @@ impl RandomPassword {
              (numbers.0, numbers.1),]
             .iter()
             .map(|(bignum, data)| {
-                self._DIV_UNIT((*bignum).clone())
+                self._DIV_UNIT(*bignum)
                     .par_iter()
                     .map(|cnt| {
                         Self::_RAND_IDX(*cnt, data.len())
@@ -117,17 +142,16 @@ impl RandomPassword {
 
     /// Decompose large numbers into smaller numbers
     #[inline]
-    pub(crate) fn _DIV_UNIT<T>(&self, n: T) -> Vec<usize>
-        where T: ToBigUint + SubAssign + PartialOrd + Clone
+    pub(crate) fn _DIV_UNIT<T: P>(&self, n: &T) -> Vec<usize>
     {
 
         let mut n = n.to_biguint().unwrap();
 
-        let UNIT = self._UNIT.to_biguint().unwrap();
-        let mut ret = Vec::with_capacity((n.clone() / UNIT.clone() + BigUint::one()).to_usize().unwrap());
+        let UNIT = BigUint::from(self._UNIT);
+        let mut ret = Vec::with_capacity((&n / &UNIT + BigUint::one()).to_usize().unwrap());
 
         loop {
-            if n < UNIT.clone() {
+            if n < UNIT {
                 ret.push(n.to_usize().unwrap());
                 break;
             } else {
@@ -143,7 +167,7 @@ impl RandomPassword {
 
     /// Generate n random numbers, each one is up to cnt
     #[inline]
-    pub(crate) fn _RAND_IDX(n: impl ToBigUint, cnt: usize) -> Vec<usize> {
+    pub(crate) fn _RAND_IDX(n: impl TBU, cnt: usize) -> Vec<usize> {
 
         let mut n = n.to_biguint().unwrap();
         let mut idxs = Vec::with_capacity(n.to_usize().unwrap());
