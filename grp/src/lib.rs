@@ -145,11 +145,11 @@ impl RandPwd {
 
     /// Generate random password
     #[inline]
-    pub(crate) fn _PWD<'a, T: P>(&self, letters: I<'a, T>, symbols: I<'a, T>, numbers: I<'a, T>) -> String {
+    pub(crate) fn _PWD<'a, T: P>(&self, ltr: I<'a, T>, sbl: I<'a, T>, num: I<'a, T>) -> String {
         // TODO: - Improve readability
-        vec![(letters.0, letters.1),
-             (symbols.0, symbols.1),
-             (numbers.0, numbers.1),]
+        vec![(ltr.0, ltr.1),
+             (sbl.0, sbl.1),
+             (num.0, num.1),]
             .iter()
             .map(|(bignum, data)| {
                 self._DIV_UNIT(*bignum)
@@ -231,11 +231,9 @@ impl RandPwd {
                 .collect::<Vec<_>>()
                 .concat();
 
-        vec![
-            &[(65, 90), (97, 122)][..],                      // letters
-            &[(33, 47), (58, 64), (91, 96), (123, 126)][..], // symbols
-            &[(48, 57)][..],                                 // numbers
-        ]
+        vec![&[(65, 90), (97, 122)][..],                      // letters
+             &[(33, 47), (58, 64), (91, 96), (123, 126)][..], // symbols
+             &[(48, 57)][..],]                                // numbers
             .iter()
             .map(|x| GEN(&x[..]))
             .collect::<Vec<_>>()
