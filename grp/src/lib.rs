@@ -1,11 +1,19 @@
 #![allow(non_snake_case)]
 #![feature(trait_alias)]
+#[macro_use]
+extern crate lazy_static;
 
 use rand::prelude::*;
 use rayon::prelude::*;
 use num_bigint::{ BigUint, ToBigUint };
 use num_traits::{ Zero, One, ToPrimitive };
 use std::{ fmt::{ Display, Formatter, Result }, ops::SubAssign };
+
+
+lazy_static! {
+    /// Cached the characters set
+    static ref DATA: Vec<Vec<String>> = RandPwd::_DATA();
+}
 
 
 
@@ -62,7 +70,7 @@ impl RandPwd {
     /// Generate the password
     #[inline]
     pub fn join(&mut self) {
-        let data = Self::_DATA(); // TODO : - Cached this variable
+        let data = &DATA;
         let mut PWD: String = self._PWD((&self.ltr_cnt, &data[0]),
                                         (&self.sbl_cnt, &data[1]),
                                         (&self.num_cnt, &data[2]),);
@@ -70,6 +78,7 @@ impl RandPwd {
         bytes.shuffle(&mut thread_rng());
         self.content = bytes.par_iter().map(|s| *s as char).collect::<String>();
     }
+
 
     /// Return the content of random password in `&str`
     /// # Example
@@ -108,6 +117,7 @@ impl RandPwd {
         self._UNIT = val;
     }
 
+
     /// Change the count of letters, symbols or numbers of `RandPwd`
     /// ```
     /// use grp::*;
@@ -143,6 +153,7 @@ impl RandPwd {
         }
     }
 
+
     /// Generate random password
     #[inline]
     pub(crate) fn _PWD<'a, T: P>(&self, ltr: I<'a, T>, sbl: I<'a, T>, num: I<'a, T>) -> String {
@@ -157,7 +168,7 @@ impl RandPwd {
                     .map(|cnt| {
                         Self::_RAND_IDX(*cnt, data.len())
                             .par_iter()
-                            // TODO : - Remove this clone which can cause huge overhead of both memory and CPU
+                            // TODO: - Remove this clone which can cause huge overhead of both memory and CPU
                             .map(|idx| data[*idx].clone())
                             .collect::<String>()
                     })
@@ -215,7 +226,7 @@ impl RandPwd {
     /// return letters, symbols, numbers in `Vec<Vec<String>>`
     #[inline]
     pub(crate) fn _DATA() -> Vec<Vec<String>> {
-
+        // TODO: Maybe can use heapless Vec here
         let GEN = |range_list: &[(u8, u8)]|
             range_list
                 .into_iter()
