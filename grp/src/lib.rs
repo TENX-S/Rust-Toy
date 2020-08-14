@@ -25,7 +25,6 @@ trait P = ToBigUint + Clone + SubAssign + PartialOrd;
 
 lazy_static! {
     /// Cached the characters set
-    // static ref DATA: Vec<Vec<String>> = RandPwd::_DATA();
     static ref DATA: CharSet = RandPwd::_DATA();
 }
 
