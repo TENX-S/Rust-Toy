@@ -1,16 +1,11 @@
 #![allow(non_snake_case)]
 #![feature(trait_alias)]
+#[macro_use]
+extern crate lazy_static;
 
 mod prelude;
 use prelude::*;
 
-#[macro_use]
-extern crate lazy_static;
-
-lazy_static! {
-    /// Cached the characters set
-    static ref DATA: CharSet = RandPwd::_DATA();
-}
 
 
 /// struct `RandPwd`
@@ -19,7 +14,7 @@ pub struct RandPwd {
     ltr_cnt: BigUint,
     sbl_cnt: BigUint,
     num_cnt: BigUint,
-    content: String,
+    content: String, // TODO: - use the heapless String
     _UNIT: usize,
 }
 
@@ -132,15 +127,16 @@ impl RandPwd {
     /// // Output: +iQiQGSXl(nv
     /// ```
     #[inline]
-    pub fn set_cnt<T: ToBigUint>(&mut self, kind: &str, val: T) {
+    pub fn set_cnt<T: ToBigUint>(&mut self, kind: &str, val: T) -> Option<()> {
         match kind {
 
-            "ltr" => self.ltr_cnt = val.to_biguint().unwrap(),
-            "sbl" => self.sbl_cnt = val.to_biguint().unwrap(),
-            "num" => self.num_cnt = val.to_biguint().unwrap(),
+            "ltr" => self.ltr_cnt = val.to_biguint()?,
+            "sbl" => self.sbl_cnt = val.to_biguint()?,
+            "num" => self.num_cnt = val.to_biguint()?,
 
             _     => (),
         }
+        Some(())
     }
 
 
@@ -158,7 +154,7 @@ impl RandPwd {
                     .map(|cnt| {
                         Self::_RAND_IDX(*cnt, data.len())
                             .par_iter()
-                            // TODO: - Remove this clone which can cause huge overhead of both memory and CPU
+                            // TODO: - Remove this `clone` which can cause huge overhead of both memory and CPU
                             .map(|idx| data[*idx].clone())
                             .collect::<String>()
                     })
@@ -208,34 +204,6 @@ impl RandPwd {
         }
 
         idxs
-
-    }
-
-
-    /// Characters set
-    /// return letters, symbols, numbers in `CharSet`
-    #[inline]
-    pub(crate) fn _DATA() -> CharSet {
-        let GEN = |range_list: &[(u8, u8)]|
-            range_list
-                .into_iter()
-                .map(|(start, end)|
-                    (*start..=*end)
-                        .collect::<NumSet>()
-                        .into_iter()
-                        .map(|asc_num|
-                            (asc_num as char).to_string()
-                        )
-                        .collect::<StrSet>()
-                )
-                .fold(StrSet::new(), |mut acc, x| { acc.extend_from_slice(&x).unwrap(); acc });
-
-        [&[(65, 90), (97, 122)][..],
-            &[(33, 47), (58, 64), (91, 96), (123, 126)][..],
-            &[(48, 57)][..],]
-            .iter()
-            .map(|x| GEN(x))
-            .collect::<CharSet>()
 
     }
 

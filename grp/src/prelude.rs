@@ -18,3 +18,35 @@ pub type StrSet = heapless::Vec<String, U52>;
 pub type CharSet = heapless::Vec<StrSet, U3>;
 
 pub trait P = ToBigUint + Clone + SubAssign + PartialOrd;
+
+
+lazy_static! {
+    /// Cached the characters set
+    pub static ref DATA: CharSet = _DATA();
+}
+
+/// Characters set
+/// return letters, symbols, numbers in `CharSet`
+pub(crate) fn _DATA() -> CharSet {
+    let GEN = |range_list: &[(u8, u8)]|
+        range_list
+            .into_iter()
+            .map(|(start, end)|
+                (*start..=*end)
+                    .collect::<NumSet>()
+                    .into_iter()
+                    .map(|asc_num|
+                        (asc_num as char).to_string()
+                    )
+                    .collect::<StrSet>()
+            )
+            .fold(StrSet::new(), |mut acc, x| { acc.extend_from_slice(&x).unwrap(); acc });
+
+    [&[(65, 90), (97, 122)][..],
+        &[(33, 47), (58, 64), (91, 96), (123, 126)][..],
+        &[(48, 57)][..],]
+        .iter()
+        .map(|x| GEN(x))
+        .collect::<CharSet>()
+
+}
