@@ -1,20 +1,33 @@
 #![allow(non_snake_case)]
 #![feature(trait_alias)]
+
 #[macro_use]
 extern crate lazy_static;
 
+use heapless;
 use rand::prelude::*;
 use rayon::prelude::*;
+use typenum::{ U52, U3, U26 };
 use num_bigint::{ BigUint, ToBigUint };
 use num_traits::{ Zero, One, ToPrimitive };
 use std::{ fmt::{ Display, Formatter, Result }, ops::SubAssign };
 
+/// Type alias for the parameter of method `_PWD`,
+/// `T` represents the count of characters should be used,
+/// `&[String]` represent the corresponding characters set
+type I<'a, T> = (&'a T, &'a [String]);
+
+type NumSet = heapless::Vec<u8, U26>;
+type StrSet = heapless::Vec<String, U52>;
+type CharSet = heapless::Vec<StrSet, U3>;
+
+trait P = ToBigUint + Clone + SubAssign + PartialOrd;
 
 lazy_static! {
     /// Cached the characters set
-    static ref DATA: Vec<Vec<String>> = RandPwd::_DATA();
+    // static ref DATA: Vec<Vec<String>> = RandPwd::_DATA();
+    static ref DATA: CharSet = RandPwd::_DATA();
 }
-
 
 
 /// struct `RandPwd`
@@ -27,12 +40,7 @@ pub struct RandPwd {
     _UNIT: usize,
 }
 
-/// Type alias for the parameter of method `_PWD`,
-/// `T` represents the count of characters should be used,
-/// `&[String]` represent the corresponding characters set
-type I<'a, T> = (&'a T, &'a [String]);
 
-trait P = ToBigUint + Clone + SubAssign + PartialOrd;
 
 impl RandPwd {
 
@@ -225,29 +233,27 @@ impl RandPwd {
     /// Characters set
     /// return letters, symbols, numbers in `Vec<Vec<String>>`
     #[inline]
-    pub(crate) fn _DATA() -> Vec<Vec<String>> {
-        // TODO: Maybe can use heapless Vec here
+    pub(crate) fn _DATA() -> CharSet {
         let GEN = |range_list: &[(u8, u8)]|
             range_list
                 .into_iter()
                 .map(|(start, end)|
                     (*start..=*end)
-                        .collect::<Vec<_>>()
+                        .collect::<NumSet>()
                         .into_iter()
                         .map(|asc_num|
                             (asc_num as char).to_string()
                         )
-                        .collect::<Vec<_>>()
+                        .collect::<StrSet>()
                 )
-                .collect::<Vec<_>>()
-                .concat();
+                .fold(StrSet::new(), |mut acc, x| { acc.extend_from_slice(&x).unwrap(); acc });
 
-        vec![&[(65, 90), (97, 122)][..],                      // letters
-             &[(33, 47), (58, 64), (91, 96), (123, 126)][..], // symbols
-             &[(48, 57)][..],]                                // numbers
+        [&[(65, 90), (97, 122)][..],
+            &[(33, 47), (58, 64), (91, 96), (123, 126)][..],
+            &[(48, 57)][..],]
             .iter()
-            .map(|x| GEN(&x[..]))
-            .collect::<Vec<_>>()
+            .map(|x| GEN(x))
+            .collect::<CharSet>()
 
     }
 
