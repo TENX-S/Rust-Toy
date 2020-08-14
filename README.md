@@ -10,6 +10,8 @@ Rust ≥ 1.44.0
 - [x] [Generate random password](https://github.com/TENX-S/Rust-demo/tree/master/grp)
 - - [x] Multi-threads
 - - [x] Unlimited numbers
+- - [] no heap allocation
+- - [] no std
 - [x] [Decrypt ncm file](https://github.com/TENX-S/Rust-demo/tree/master/decrypt_ncm)
 - - [x] Multi-threads
 - [x] Exp! - [Play music in terminal](https://github.com/TENX-S/Rust-demo/tree/master/rusic)
