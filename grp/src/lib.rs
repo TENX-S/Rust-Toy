@@ -1,27 +1,11 @@
 #![allow(non_snake_case)]
 #![feature(trait_alias)]
 
+mod prelude;
+use prelude::*;
+
 #[macro_use]
 extern crate lazy_static;
-
-use heapless;
-use rand::prelude::*;
-use rayon::prelude::*;
-use typenum::{ U52, U3, U26 };
-use num_bigint::{ BigUint, ToBigUint };
-use num_traits::{ Zero, One, ToPrimitive };
-use std::{ fmt::{ Display, Formatter, Result }, ops::SubAssign };
-
-/// Type alias for the parameter of method `_PWD`,
-/// `T` represents the count of characters should be used,
-/// `&[String]` represent the corresponding characters set
-type I<'a, T> = (&'a T, &'a [String]);
-
-type NumSet = heapless::Vec<u8, U26>;
-type StrSet = heapless::Vec<String, U52>;
-type CharSet = heapless::Vec<StrSet, U3>;
-
-trait P = ToBigUint + Clone + SubAssign + PartialOrd;
 
 lazy_static! {
     /// Cached the characters set
@@ -38,7 +22,6 @@ pub struct RandPwd {
     content: String,
     _UNIT: usize,
 }
-
 
 
 impl RandPwd {
