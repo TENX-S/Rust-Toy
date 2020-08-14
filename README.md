@@ -11,7 +11,7 @@ Rust ≥ 1.44.0
 ### [Generate random password](https://github.com/TENX-S/Rust-demo/tree/master/grp)
 - [x] Multi-threads
 - [x] Unlimited numbers
-- [ ] no heap allocation
+- [ ] no heap allocation (Partial implementation)
 - [ ] no std
 
 ### [Decrypt ncm file](https://github.com/TENX-S/Rust-demo/tree/master/decrypt_ncm)
