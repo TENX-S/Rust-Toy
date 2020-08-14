@@ -213,7 +213,7 @@ impl RandPwd {
 
 
     /// Characters set
-    /// return letters, symbols, numbers in `Vec<Vec<String>>`
+    /// return letters, symbols, numbers in `CharSet`
     #[inline]
     pub(crate) fn _DATA() -> CharSet {
         let GEN = |range_list: &[(u8, u8)]|
@@ -245,34 +245,4 @@ impl Display for RandPwd {
     fn fmt(&self, f: &mut Formatter) -> Result {
         write!(f, "{}", self.show())
     }
-}
-
-
-
-
-#[cfg(test)]
-mod tests {
-
-    use super::*;
-
-
-    #[test]
-    fn _GEN_works() {
-
-        assert_eq!(RandPwd::_DATA()[2], vec!["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]);
-        assert_eq!(RandPwd::_DATA()[1], vec!["!", "\"", "#", "$", "%", "&", "\'", "(", ")", "*", "+", ",", "-", ".", "/", ":", ";", "<", "=", ">", "?", "@", "[", "\\", "]", "^", "_", "`", "{", "|", "}", "~"]);
-        assert_eq!(RandPwd::_DATA()[0], vec!["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z"]);
-
-    }
-
-
-    #[test]
-    fn _RAND_IDX_works() {
-        assert!(RandPwd::_RAND_IDX(10_000.to_biguint().unwrap(), 100_0000)
-                               .into_iter()
-                               .filter(|x| *x > 100_0000)
-                               .collect::<Vec<_>>()
-                               .is_empty());
-    }
-
 }
