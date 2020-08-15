@@ -9,7 +9,7 @@ use prelude::*;
 
 
 /// struct `RandPwd`
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct RandPwd {
     ltr_cnt: BigUint,
     sbl_cnt: BigUint,
@@ -211,6 +211,6 @@ impl RandPwd {
 
 impl Display for RandPwd {
     fn fmt(&self, f: &mut Formatter) -> Result {
-        write!(f, "{}", self.show())
+        write!(f, "{}", self.content)
     }
 }
