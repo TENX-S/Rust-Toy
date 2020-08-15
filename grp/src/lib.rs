@@ -9,7 +9,7 @@ use prelude::*;
 
 
 /// struct `RandPwd`
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Debug)]
 pub struct RandPwd {
     ltr_cnt: BigUint,
     sbl_cnt: BigUint,
@@ -207,6 +207,12 @@ impl RandPwd {
 
     }
 
+}
+
+impl Default for RandPwd {
+    fn default() -> Self {
+        RandPwd::new(0, 0, 0)
+    }
 }
 
 impl Display for RandPwd {
