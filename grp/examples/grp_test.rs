@@ -12,7 +12,7 @@ fn main() {
     if demands.is_empty() {
         r_p = RandPwd::new(10, 2, 3);
         r_p.join();
-        println!("\n{}\n", r_p);
+        println!("{}", r_p);
     } else {
         let ltr_cnt = demands[0].clone();
         let sbl_cnt = demands[1].clone();
@@ -20,7 +20,7 @@ fn main() {
 
         r_p = RandPwd::new(ltr_cnt, sbl_cnt, num_cnt);
         r_p.join();
-        println!("\n{}\n", r_p);
+        println!("{}", r_p);
     }
 
 }

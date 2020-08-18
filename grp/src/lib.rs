@@ -1,6 +1,7 @@
 #![allow(non_snake_case)]
 #![feature(trait_alias)]
 
+
 #[macro_use]
 extern crate lazy_static;
 
@@ -8,7 +9,7 @@ mod prelude;
 use prelude::*;
 
 
-
+// TODO: implement a specifc version for small number
 /// struct `RandPwd`
 #[derive(Clone, Debug)]
 pub struct RandPwd {
@@ -16,7 +17,7 @@ pub struct RandPwd {
     sbl_cnt: BigUint,
     num_cnt: BigUint,
     content: String, // TODO: - use the heapless String
-    _UNIT: usize,
+    _UNIT: usize,    // TODO: - implement a smart _UNIT initialization
 }
 
 
@@ -38,9 +39,15 @@ impl RandPwd {
     /// let num_cnt = BigUint::from_str(&format!("{}000", usize::MAX)).unwrap();
     ///
     /// r_p = RandPwd::new(ltr_cnt, sbl_cnt, num_cnt);
+    ///
+    /// // You can also mix the `BigUint` with primitive type
     /// ```
     #[inline]
-    pub fn new<T: ToBigUint>(ltr_cnt: T, sbl_cnt: T, num_cnt: T) -> Self {
+    pub fn new<L, S, N>(ltr_cnt: L, sbl_cnt: S, num_cnt: N) -> Self
+    where L: ToBigUint,
+          S: ToBigUint,
+          N: ToBigUint,
+    {
 
         RandPwd {
             ltr_cnt: ltr_cnt.to_biguint().unwrap(),
@@ -60,8 +67,8 @@ impl RandPwd {
         let mut PWD: String = self._PWD((&self.ltr_cnt, &data[0]),
                                         (&self.sbl_cnt, &data[1]),
                                         (&self.num_cnt, &data[2]),);
-        let bytes = unsafe { PWD.as_bytes_mut() };
-        bytes.shuffle(&mut thread_rng());
+        let bytes = unsafe { PWD.as_bytes_mut() }; // TODO: - Remove this unsafe
+        bytes.shuffle(&mut thread_rng());          // TODO: - Use a faster algorithm
         self.content = bytes.par_iter().map(|s| *s as char).collect::<String>();
     }
 
@@ -146,6 +153,7 @@ impl RandPwd {
         Some(())
     }
 
+
     /// Get count of `RandPwd`
     /// ```
     /// use grp::RandPwd;
@@ -179,7 +187,7 @@ impl RandPwd {
                 self._DIV_UNIT(*bignum)
                     .par_iter()
                     .map(|cnt| {
-                        Self::_RAND_IDX(*cnt, data.len())
+                        _RAND_IDX(*cnt, data.len())
                             .par_iter()
                             // TODO: - Remove this `clone` which can cause huge overhead of both memory and CPU
                             .map(|idx| data[*idx].clone())
@@ -217,24 +225,8 @@ impl RandPwd {
 
     }
 
-
-    /// Generate n random numbers, each one is up to cnt
-    #[inline]
-    pub(crate) fn _RAND_IDX(n: impl ToBigUint, cnt: usize) -> Vec<usize> {
-
-        let mut n = n.to_biguint().unwrap();
-        let mut idxs = Vec::with_capacity(n.to_usize().unwrap());
-
-        while !n.is_zero() {
-            idxs.push(thread_rng().gen_range(0, cnt));
-            n -= BigUint::one();
-        }
-
-        idxs
-
-    }
-
 }
+
 
 impl Default for RandPwd {
     fn default() -> Self {
@@ -242,11 +234,27 @@ impl Default for RandPwd {
     }
 }
 
+
 impl Display for RandPwd {
     fn fmt(&self, f: &mut Formatter) -> Result {
-        write!(f, "{}", self.content)
+        write!(f, "\n{}", self.content)
     }
 }
+
+
+impl Add for RandPwd {
+    type Output = Self;
+    fn add(self, rhs: Self) -> Self {
+        RandPwd {
+            ltr_cnt: self.ltr_cnt + rhs.ltr_cnt,
+            sbl_cnt: self.sbl_cnt + rhs.sbl_cnt,
+            num_cnt: self.num_cnt + rhs.num_cnt,
+            content: self.content + &rhs.content,
+            _UNIT: 1,
+        }
+    }
+}
+
 
 impl AsRef<str> for RandPwd {
 
@@ -256,15 +264,30 @@ impl AsRef<str> for RandPwd {
 
 }
 
-impl<T: AsRef<String>> From<T> for RandPwd {
 
-    fn from(s: T) -> Self {
-        let (ltr_cnt, sbl_cnt, num_cnt) = cnt(s.as_ref());
+impl From<&str> for RandPwd {
+
+    fn from(s: &str) -> Self {
+        let (ltr_cnt, sbl_cnt, num_cnt) = _CNT(s);
         let mut r_p = RandPwd::new(ltr_cnt, sbl_cnt, num_cnt);
-        r_p.set_content(s.as_ref());
+        r_p.set_content(s);
         r_p.set_unit(1);
 
         r_p
+    }
+
+}
+
+
+pub trait ToRandPwd {
+    fn to_randpwd(&self) -> Option<RandPwd>;
+}
+
+impl<T: AsRef<str>> ToRandPwd for T {
+
+    #[inline]
+    fn to_randpwd(&self) -> Option<RandPwd> {
+        Some(RandPwd::from(self.as_ref()))
     }
 
 }
