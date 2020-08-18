@@ -56,19 +56,3 @@ pub fn get_music_time(file_path: &str) -> (u64, u64){
     (minutes, seconds)
 
 }
-
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn music_list() {
-        // MARK : - Remember first to run the example ncm_test in decrypt_ncm or this test will be failed
-
-        let list = get_music_list("../decrypt_ncm/ncm_files".to_string());
-        assert_eq!(list.len(), 2);
-        println!("Music List: {:?}", list);
-    }
-
-}

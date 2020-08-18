@@ -1,5 +1,6 @@
 #![allow(non_snake_case)]
 #![feature(trait_alias)]
+
 #[macro_use]
 extern crate lazy_static;
 
@@ -80,6 +81,12 @@ impl RandPwd {
         &self.content
     }
 
+    /// Change the content of `RandPwd`
+    #[inline]
+    pub fn set_content(&mut self, val: &str) {
+        self.content = val.to_string();
+    }
+
 
     /// Returns the length of this `RandPwd`, in both bytes and [char]s.
     #[inline]
@@ -137,6 +144,26 @@ impl RandPwd {
             _     => (),
         }
         Some(())
+    }
+
+    /// Get count of `RandPwd`
+    /// ```
+    /// use grp::RandPwd;
+    /// use num_traits::ToPrimitive;
+    /// let r_p = RandPwd::new(10, 2, 3);
+    /// assert_eq!(r_p.get_cnt("ltr").unwrap().to_usize().unwrap(), 10);
+    /// assert_eq!(r_p.get_cnt("sbl").unwrap().to_usize().unwrap(), 2);
+    /// assert_eq!(r_p.get_cnt("num").unwrap().to_usize().unwrap(), 3);
+    /// ```
+    #[inline]
+    pub fn get_cnt(&self, kind: &str) -> Option<&BigUint> {
+        match kind {
+            "ltr" => Some(&self.ltr_cnt),
+            "sbl" => Some(&self.sbl_cnt),
+            "num" => Some(&self.num_cnt),
+
+              _   => None,
+        }
     }
 
 
@@ -219,4 +246,25 @@ impl Display for RandPwd {
     fn fmt(&self, f: &mut Formatter) -> Result {
         write!(f, "{}", self.content)
     }
+}
+
+impl AsRef<str> for RandPwd {
+
+    fn as_ref(&self) -> &str {
+        &self.content
+    }
+
+}
+
+impl<T: AsRef<str>> From<T> for RandPwd {
+
+    fn from(s: T) -> Self {
+        let (ltr_cnt, sbl_cnt, num_cnt) = cnt(s.as_ref());
+        let mut r_p = RandPwd::new(ltr_cnt, sbl_cnt, num_cnt);
+        r_p.set_content(s.as_ref());
+        r_p.set_unit(1);
+
+        r_p
+    }
+
 }

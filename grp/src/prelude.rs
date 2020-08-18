@@ -6,7 +6,7 @@ pub use rayon::prelude::*;
 pub use typenum::{ U3, U26, U52, };
 pub use num_bigint::{ BigUint, ToBigUint };
 pub use num_traits::{ Zero, One, ToPrimitive };
-pub use std::{ fmt::{ Display, Formatter, Result }, ops::SubAssign };
+pub use std::{ ops::SubAssign, convert::From, fmt::{ Display, Formatter, Result }, };
 
 /// Type alias for the parameter of method `_PWD`,
 /// `T` represents the count of characters should be used,
@@ -48,5 +48,27 @@ pub(crate) fn _DATA() -> CharVec {
         .iter()
         .map(|x| GEN(x))
         .collect::<CharVec>()
+
+}
+
+
+/// Count the number of a string
+pub(crate) fn cnt<T: AsRef<str>>(content: T) -> (usize, usize, usize) {
+
+    let mut l = 0;
+    let mut s = 0;
+    let mut n = 0;
+
+
+    // TODO: - Multi-threads
+    content.as_ref().chars().for_each(
+        |x| {
+            if x.is_alphabetic() { l += 1; }
+            else if x.is_numeric() { n += 1; }
+            else { s += 1; }
+        }
+    );
+
+    (l, s, n)
 
 }
