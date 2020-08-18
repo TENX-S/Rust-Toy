@@ -256,7 +256,7 @@ impl AsRef<str> for RandPwd {
 
 }
 
-impl<T: AsRef<str>> From<T> for RandPwd {
+impl<T: AsRef<String>> From<T> for RandPwd {
 
     fn from(s: T) -> Self {
         let (ltr_cnt, sbl_cnt, num_cnt) = cnt(s.as_ref());
