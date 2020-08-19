@@ -1,4 +1,4 @@
-use grp::*;
+use rpg::*;
 use std::env;
 use num_bigint::BigUint;
 

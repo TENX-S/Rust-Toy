@@ -1,7 +1,9 @@
-# Generate random password
+# Random password generator
 
 
+## Requirement
 
+You must use the **nightly** version to compile this crate
 
 ## Try it!
 ```shell script
@@ -14,13 +16,3 @@ $ cargo run --release --example grp_test 16 2 3
 # Try a larger number!
 $ cargo run --release --example grp_test 200000 200 300
 ```
-
-
-
-
-
-
-
-
-
-

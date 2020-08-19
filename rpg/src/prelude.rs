@@ -19,13 +19,14 @@ pub type I<'a, T> = (&'a T, &'a [String]);
 pub type StrVec = heapless::Vec<String, U52>;
 pub type CharVec = heapless::Vec<StrVec, U3>;
 
-pub trait P = ToBigUint + Clone + SubAssign + PartialOrd;
+pub trait P = Clone + ToBigUint + SubAssign + PartialOrd;
 
 
 lazy_static! {
     /// Cached the characters set
     pub static ref DATA: CharVec = _DATA();
 }
+
 
 /// Characters set
 /// return letters, symbols, numbers in `CharVec`

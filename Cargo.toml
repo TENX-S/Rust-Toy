@@ -1,5 +1,5 @@
 [workspace]
-members = ["grp", "decrypt_ncm", "rusic"]
+members = ["rpg", "decrypt_ncm", "rusic"]
 
 [profile.release]
 panic = "abort"

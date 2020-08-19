@@ -89,6 +89,7 @@ impl RandPwd {
         &self.content
     }
 
+
     /// Change the content of `RandPwd`
     #[inline]
     pub fn set_content(&mut self, val: &str) {
@@ -256,6 +257,7 @@ impl Add for RandPwd {
     }
 }
 
+
 impl AddAssign for RandPwd {
 
     fn add_assign(&mut self, rhs: Self) {
@@ -267,6 +269,7 @@ impl AddAssign for RandPwd {
 
     }
 }
+
 
 impl AsRef<str> for RandPwd {
 
@@ -302,12 +305,4 @@ impl<T: AsRef<str>> ToRandPwd for T {
         Some(RandPwd::from(self.as_ref()))
     }
 
-}
-
-#[test]
-fn addassign_works() {
-    let mut a = RandPwd::from("");
-    let b = RandPwd::from("");
-    a += b;
-    println!("{:?}", a);
 }
