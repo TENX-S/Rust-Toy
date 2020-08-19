@@ -8,7 +8,7 @@ Rust ≥ 1.44
 
 ## Utilities
 
-### [Random password generator](https://github.com/TENX-S/Rust-demo/tree/master/grp)
+### [Random password generator](https://github.com/TENX-S/Rust-demo/tree/master/rpg)
 - [x] Multi-threads
 - [x] Unlimited numbers
 
