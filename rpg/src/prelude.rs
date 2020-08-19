@@ -30,6 +30,7 @@ lazy_static! {
 
 /// Characters set
 /// return letters, symbols, numbers in `CharVec`
+#[inline]
 pub(crate) fn _DATA() -> CharVec {
 
     let mut letters = StrVec::new();

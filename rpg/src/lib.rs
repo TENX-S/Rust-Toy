@@ -231,21 +231,29 @@ impl RandPwd {
 
 
 impl Default for RandPwd {
+
+    #[inline]
     fn default() -> Self {
         RandPwd::new(0, 0, 0)
     }
+
 }
 
 
 impl Display for RandPwd {
+
+    #[inline]
     fn fmt(&self, f: &mut Formatter) -> Result {
         write!(f, "\n{}", self.content)
     }
+
 }
 
 
 impl Add for RandPwd {
+
     type Output = Self;
+    #[inline]
     fn add(self, rhs: Self) -> Self {
         RandPwd {
             ltr_cnt: self.ltr_cnt + rhs.ltr_cnt,
@@ -260,6 +268,7 @@ impl Add for RandPwd {
 
 impl AddAssign for RandPwd {
 
+    #[inline]
     fn add_assign(&mut self, rhs: Self) {
 
         self.ltr_cnt += rhs.ltr_cnt;
@@ -273,6 +282,7 @@ impl AddAssign for RandPwd {
 
 impl AsRef<str> for RandPwd {
 
+    #[inline]
     fn as_ref(&self) -> &str {
         &self.content
     }
@@ -282,6 +292,7 @@ impl AsRef<str> for RandPwd {
 
 impl From<&str> for RandPwd {
 
+    #[inline]
     fn from(s: &str) -> Self {
         let (ltr_cnt, sbl_cnt, num_cnt) = _CNT(s);
         let mut r_p = RandPwd::new(ltr_cnt, sbl_cnt, num_cnt);
