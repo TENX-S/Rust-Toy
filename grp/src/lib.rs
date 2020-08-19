@@ -9,7 +9,7 @@ mod prelude;
 use prelude::*;
 
 
-// TODO: implement a specifc version for small number
+// TODO: implement a specifc version for smaller number
 /// struct `RandPwd`
 #[derive(Clone, Debug)]
 pub struct RandPwd {
@@ -67,8 +67,9 @@ impl RandPwd {
         let mut PWD: String = self._PWD((&self.ltr_cnt, &data[0]),
                                         (&self.sbl_cnt, &data[1]),
                                         (&self.num_cnt, &data[2]),);
-        let bytes = unsafe { PWD.as_bytes_mut() }; // TODO: - Remove this unsafe
-        bytes.shuffle(&mut thread_rng());          // TODO: - Use a faster algorithm
+        // This is absolutely safe, because they are all ASCII characters except control ones.
+        let bytes = unsafe { PWD.as_bytes_mut() };
+        bytes.shuffle(&mut thread_rng());
         self.content = bytes.par_iter().map(|s| *s as char).collect::<String>();
     }
 
@@ -255,6 +256,17 @@ impl Add for RandPwd {
     }
 }
 
+impl AddAssign for RandPwd {
+
+    fn add_assign(&mut self, rhs: Self) {
+
+        self.ltr_cnt += rhs.ltr_cnt;
+        self.sbl_cnt += rhs.sbl_cnt;
+        self.num_cnt += rhs.num_cnt;
+        self.content += &rhs.content;
+
+    }
+}
 
 impl AsRef<str> for RandPwd {
 
@@ -290,4 +302,12 @@ impl<T: AsRef<str>> ToRandPwd for T {
         Some(RandPwd::from(self.as_ref()))
     }
 
+}
+
+#[test]
+fn addassign_works() {
+    let mut a = RandPwd::from("");
+    let b = RandPwd::from("");
+    a += b;
+    println!("{:?}", a);
 }

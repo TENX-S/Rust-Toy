@@ -7,8 +7,8 @@ pub use num_bigint::{ BigUint, ToBigUint };
 pub use num_traits::{ Zero, One, ToPrimitive };
 pub use std::{
     convert::From,
-    ops::{ Add, SubAssign },
-    fmt::{ Display, Formatter, Result },
+    ops::{ Add, SubAssign, AddAssign, },
+    fmt::{ Display, Formatter, Result, },
 };
 
 /// Type alias for the parameter of method `_PWD`,
@@ -42,8 +42,8 @@ pub(crate) fn _DATA() -> CharVec {
             .map(|x| {
                 let ch = x as u8 as char;
                 if ch.is_ascii_alphabetic()  { letters.push(ch.to_string()).unwrap(); }
-                if ch.is_ascii_digit()       { symbols.push(ch.to_string()).unwrap(); }
                 if ch.is_ascii_punctuation() { numbers.push(ch.to_string()).unwrap(); }
+                if ch.is_ascii_digit()       { symbols.push(ch.to_string()).unwrap(); }
             })
             .collect::<()>();
 
@@ -71,7 +71,7 @@ pub(crate) fn _CNT<T: AsRef<str>>(content: T) -> (usize, usize, usize) {
                 if x.is_ascii_punctuation() { s += 1; }
                 if x.is_ascii_digit()       { n += 1; }
             } else {
-                panic!("Has non-ASCII character(s)!")
+                panic!("Has non-ASCII character(s)!, the first one is: {:?}", x)
             }
         }
     );
