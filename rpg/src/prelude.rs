@@ -1,4 +1,5 @@
 
+
 pub use heapless;
 pub use rand::prelude::*;
 pub use rayon::prelude::*;
@@ -11,15 +12,8 @@ pub use std::{
     fmt::{ Display, Formatter, Result, },
 };
 
-/// Type alias for the parameter of method `_PWD`,
-/// `T` represents the count of characters should be used,
-/// `&[String]` represent the corresponding characters set
-pub type I<'a, T> = (&'a T, &'a [String]);
-
 pub type StrVec = heapless::Vec<String, U52>;
 pub type CharVec = heapless::Vec<StrVec, U3>;
-
-pub trait P = Clone + ToBigUint + SubAssign + PartialOrd;
 
 
 lazy_static! {
@@ -95,5 +89,151 @@ pub(crate) fn _RAND_IDX(n: impl ToBigUint, cnt: usize) -> Vec<usize> {
     }
 
     idxs
+
+}
+
+/// Resolve large numbers into smaller numbers
+#[inline]
+pub(crate) fn _DIV_UNIT<T>(unit: usize, n: &T) -> Vec<usize>
+    where T: Clone + ToBigUint + SubAssign + PartialOrd
+{
+
+    let mut n = n.to_biguint().unwrap();
+
+    let UNIT = BigUint::from(unit);
+    let mut ret = Vec::with_capacity((&n / &UNIT + BigUint::one()).to_usize().unwrap());
+
+    loop {
+        if n < UNIT {
+            ret.push(n.to_usize().unwrap());
+            break;
+        } else {
+            n -= UNIT.clone();
+            ret.push(unit);
+        }
+    }
+
+    ret
+
+}
+
+use crate::RandPwd;
+
+/// Generate random password but in the order like "letters->symbols->numbers"
+#[inline]
+pub(crate) fn _PWD(r_p: &RandPwd) -> String {
+    // TODO: - Improve readability
+
+    let unit = r_p._UNIT;
+    let data = &DATA;
+
+    vec![(&r_p.ltr_cnt, &data[0]),
+         (&r_p.sbl_cnt, &data[1]),
+         (&r_p.num_cnt, &data[2]),]
+        .iter()
+        .map(|(bignum, data)| {
+            _DIV_UNIT(unit, *bignum)
+                .par_iter()
+                .map(|cnt| {
+                    _RAND_IDX(*cnt, data.len())
+                        .par_iter()
+                        // TODO: - Remove this `clone` which can cause huge overhead of both memory and CPU
+                        .map(|idx| data[*idx].clone())
+                        .collect::<String>()
+                })
+                .collect()
+        })
+        .collect::<Vec<Vec<_>>>()
+        .concat()
+        .join("")
+
+}
+
+
+impl Default for RandPwd {
+
+    #[inline]
+    fn default() -> Self {
+        RandPwd::new(0, 0, 0)
+    }
+
+}
+
+
+impl Display for RandPwd {
+
+    #[inline]
+    fn fmt(&self, f: &mut Formatter) -> Result {
+        write!(f, "\n{}", self.content)
+    }
+
+}
+
+
+impl Add for RandPwd {
+
+    type Output = Self;
+    #[inline]
+    fn add(self, rhs: Self) -> Self {
+        RandPwd {
+            ltr_cnt: self.ltr_cnt + rhs.ltr_cnt,
+            sbl_cnt: self.sbl_cnt + rhs.sbl_cnt,
+            num_cnt: self.num_cnt + rhs.num_cnt,
+            content: self.content + &rhs.content,
+            _UNIT: 1,
+        }
+    }
+}
+
+
+impl AddAssign for RandPwd {
+
+    #[inline]
+    fn add_assign(&mut self, rhs: Self) {
+
+        self.ltr_cnt += rhs.ltr_cnt;
+        self.sbl_cnt += rhs.sbl_cnt;
+        self.num_cnt += rhs.num_cnt;
+        self.content += &rhs.content;
+
+    }
+}
+
+
+impl AsRef<str> for RandPwd {
+
+    #[inline]
+    fn as_ref(&self) -> &str {
+        &self.content
+    }
+
+}
+
+
+impl From<&str> for RandPwd {
+
+    #[inline]
+    fn from(s: &str) -> Self {
+        let (ltr_cnt, sbl_cnt, num_cnt) = _CNT(s);
+        let mut r_p = RandPwd::new(ltr_cnt, sbl_cnt, num_cnt);
+        r_p.set_val(s);
+        r_p.set_unit(1);
+
+        r_p
+    }
+
+}
+
+
+pub trait ToRandPwd {
+    fn to_randpwd(&self) -> Option<RandPwd>;
+}
+
+impl<T: AsRef<str>> ToRandPwd for T {
+
+    #[inline]
+    fn to_randpwd(&self) -> Option<RandPwd> {
+        Some(RandPwd::from(self.as_ref()))
+    }
 
 }
