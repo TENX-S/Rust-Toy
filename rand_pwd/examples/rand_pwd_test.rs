@@ -1,4 +1,4 @@
-use rpg::*;
+use rand_pwd::*;
 use std::env;
 use num_bigint::BigUint;
 

@@ -1,5 +1,5 @@
 [package]
-name = "rpg"
+name = "rand_pwd"
 version = "0.1.1"
 authors = ["TENX-S <ttenx@pm.me>"]
 edition = "2018"
